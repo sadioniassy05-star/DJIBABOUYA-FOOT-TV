@@ -95,7 +95,10 @@ function render(){
  const photo=$("tv").querySelector(".tv-photo"); if(photo) photo.style.backgroundImage=`url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
  $("teamA").textContent=state.teamA;$("teamB").textContent=state.teamB;$("scoreA").textContent=state.scoreA;$("scoreB").textContent=state.scoreB;
  $("clock").textContent=fmt(currentClock())+(state.addedTime?` +${state.addedTime}`:"");
- $("scoreboard").style.display=state.display.visible?"grid":"none";$("scoreboard").style.transform=`translateX(-50%) scale(${state.display.scale/100})`;
+ $("scoreboard").style.display=state.display.visible?"grid":"none";
+$("scoreboard").style.left=`${state.display.x??50}%`;
+$("scoreboard").style.top=`${state.display.y??9}vh`;
+$("scoreboard").style.transform=`translate(-50%,-50%) scale(${state.display.scale/100})`;
  $("scoreA").style.color=state.colors.score;
 $("scoreB").style.color=state.colors.score;
 $("clock").style.color=state.colors.clock;
@@ -154,6 +157,8 @@ $("teamAColor").value=state.colors.teamA||"#ffffff";
 $("teamBColor").value=state.colors.teamB||"#ffffff";
 $("teamABg").value=state.colors.teamABg||"#0b1220";
 $("teamBBg").value=state.colors.teamBBg||"#0b1220";
+$("positionX").value=state.display.x??50;
+$("positionY").value=state.display.y??9;
 $("scoreColor").value=state.colors.score||"#ffffff";
 $("scoreBg").value=state.colors.scoreBg||"#0b1220";
 $("clockColor").value=state.colors.clock||"#ffffff";
@@ -186,7 +191,15 @@ $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,adde
 $("publishAdded").onclick=()=>save({addedTime:Number($("addedTime").value||0)});
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
 $("scale").oninput=e=>save({display:{scale:Number(e.target.value)}});
+$("positionX").oninput=e=>{
+  state.display.x=Number(e.target.value);
+  render();
+};
 
+$("positionY").oninput=e=>{
+  state.display.y=Number(e.target.value);
+  render();
+};
 
 $("publishDirect").onclick=()=>save({directUrl:$("directUrl").value.trim(),directType:$("directType").value});
 $("publishAd").onclick=()=>save({ad:{active:true,type:"text",title:$("adTitle").value,text:$("adText").value,url:$("adUrl").value,duration:Number($("adDuration").value||10),color:$("adColor").value,bg:$("adBg").value}});
