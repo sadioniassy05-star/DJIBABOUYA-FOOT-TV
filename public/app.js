@@ -141,7 +141,15 @@ $("resetBackground").onclick=async()=>{
 
 function setupInputs(){
 
- $("teamAInput").value=state.teamA;$("teamBInput").value=state.teamB;$("directUrl").value=state.directUrl;$("directType").value=state.directType;
+$("teamAInput").value=state.teamA;$("teamBInput").value=state.teamB;
+$("teamAColor").value=state.colors.teamA||"#ffffff";
+$("teamBColor").value=state.colors.teamB||"#ffffff";
+$("teamABg").value=state.colors.teamABg||"#0b1220";
+$("teamBBg").value=state.colors.teamBBg||"#0b1220";
+$("scoreColor").value=state.colors.score||"#ffffff";
+$("scoreBg").value=state.colors.scoreBg||"#0b1220";
+$("clockColor").value=state.colors.clock||"#ffffff";
+$("directUrl").value=state.directUrl;$("directType").value=state.directType;
  $("adTitle").value=state.ad.title;$("adText").value=state.ad.text;$("adUrl").value=state.ad.url;$("adDuration").value=state.ad.duration;
  $("replayUrl").value=state.replay.url;$("replayStart").value=state.replay.start;$("replayEnd").value=state.replay.end;$("replaySpeed").value=state.replay.speed;
 }
