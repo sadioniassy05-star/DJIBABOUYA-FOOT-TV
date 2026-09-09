@@ -107,7 +107,7 @@ $("teamB").style.color=state.colors.teamB;
 $("teamA").style.background=state.colors.teamABg;
 $("teamB").style.background=state.colors.teamBBg;
 
-$("scoreboard").style.background=state.colors.scoreBg;
+$("scoreboard").style.background="transparent";
  const v=$("directVideo"); const f=$("directFrame");
  if(state.twitch?.active){
   v.classList.add("hidden");
