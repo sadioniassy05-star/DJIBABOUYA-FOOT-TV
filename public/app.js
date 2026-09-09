@@ -97,7 +97,7 @@ function render(){
  $("clock").textContent=fmt(currentClock())+(state.addedTime?` +${state.addedTime}`:"");
  $("scoreboard").style.display=state.display.visible?"grid":"none";
 $("scoreboard").style.left=`${state.display.x??50}%`;
-$("scoreboard").style.top=`${state.display.y??9}vh`;
+$("scoreboard").style.top=`${state.display.y??9}%`;
 $("scoreboard").style.transform=`translateX(-50%) scale(${state.display.scale/100})`;
  $("scoreA").style.color=state.colors.score;
 $("scoreB").style.color=state.colors.score;
