@@ -1,0 +1,19 @@
+
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "djibabouya-foot-tv",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-09",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "djibabouya-foot-tv",
+      "database_id": "REMPLACE_PAR_TON_DATABASE_ID"
+    }
+  ]
+}
