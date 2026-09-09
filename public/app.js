@@ -140,7 +140,7 @@ $("resetBackground").onclick=async()=>{
 };
 
 function setupInputs(){
- $("twitchChannel").value=state.twitch?.channel||TWITCH_CHANNEL_DEFAULT;
+
  $("teamAInput").value=state.teamA;$("teamBInput").value=state.teamB;$("directUrl").value=state.directUrl;$("directType").value=state.directType;
  $("adTitle").value=state.ad.title;$("adText").value=state.ad.text;$("adUrl").value=state.ad.url;$("adDuration").value=state.ad.duration;
  $("replayUrl").value=state.replay.url;$("replayStart").value=state.replay.start;$("replayEnd").value=state.replay.end;$("replaySpeed").value=state.replay.speed;
