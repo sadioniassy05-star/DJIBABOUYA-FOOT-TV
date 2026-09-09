@@ -158,8 +158,8 @@ $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,adde
 $("publishAdded").onclick=()=>save({addedTime:Number($("addedTime").value||0)});
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
 $("scale").oninput=e=>save({display:{scale:Number(e.target.value)}});
-$("publishTwitch").onclick=()=>save({twitch:{active:true,channel:$("twitchChannel").value.trim()||TWITCH_CHANNEL_DEFAULT},directUrl:"",directType:"iframe"});
-$("removeTwitch").onclick=()=>save({twitch:{active:false}});
+
+
 $("publishDirect").onclick=()=>save({directUrl:$("directUrl").value.trim(),directType:$("directType").value});
 $("publishAd").onclick=()=>save({ad:{active:true,type:"text",title:$("adTitle").value,text:$("adText").value,url:$("adUrl").value,duration:Number($("adDuration").value||10),color:$("adColor").value,bg:$("adBg").value}});
 $("removeAd").onclick=()=>save({ad:{active:false}});
