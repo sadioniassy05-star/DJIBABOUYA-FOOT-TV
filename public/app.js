@@ -9,21 +9,18 @@ function fmt(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/6
 function currentClock(){if(!state)return 0;if(!state.running||!state.clockStartedAt)return state.clock;return state.clock+Math.floor((Date.now()-state.clockStartedAt)/1000)}
 function twitchParent(){ return window.location.hostname || "localhost"; }
 function setTwitchVisibility(live){
-  twitchIsLive=!!live;
-  const f=$("directFrame");
-
-  if(state?.twitch?.active){
+  if(live){
+    twitchIsLive=true;
+    const f=$("directFrame");
     f.classList.remove("hidden");
-
-    if(twitchIsLive){
-      $("liveBadge").textContent="● DIRECT — BANIALFATY";
-    }else{
-      $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
-    }
-  }else{
-    f.classList.add("hidden");
-    $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+    $("liveBadge").textContent="● DIRECT — BANIALFATY";
+    return;
   }
+
+  // Ne masque pas immédiatement le lecteur lors d'une perte
+  // temporaire du signal Twitch.
+  twitchIsLive=false;
+  $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
 }
 function initTwitchPlayer(channel){
   const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/ ,"");
