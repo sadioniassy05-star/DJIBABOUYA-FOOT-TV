@@ -35,7 +35,19 @@ async function readState(env){
   if(!env.DB)return {...DEFAULT_STATE};
   const row=await env.DB.prepare("SELECT value FROM app_state WHERE id=1").first();
   if(!row)return {...DEFAULT_STATE};
-  try{return merge(DEFAULT_STATE,JSON.parse(row.value))}catch{return {...DEFAULT_STATE}}
+  try{
+    const state=merge(DEFAULT_STATE,JSON.parse(row.value));
+
+    // TWITCH BANIALFATY est automatique et ne dépend plus de l'Admin.
+    state.twitch={
+      active:true,
+      channel:"banialfaty"
+    };
+
+    return state;
+  }catch{
+    return {...DEFAULT_STATE};
+  }
 }
 async function saveState(env,state){
   state.updatedAt=Date.now();
