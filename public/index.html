@@ -46,16 +46,103 @@
     </div>
     <div id="controls" class="controls hidden">
       <div class="grid">
-        <section class="card"><h2>⚽ Affichage TV</h2>
-          <div class="row"><input id="teamAInput" placeholder="Équipe A"><input id="teamBInput" placeholder="Équipe B"></div>
-          <div class="row"><button data-score="a+">A +1</button><button data-score="a-">A -1</button><button data-score="b+">B +1</button><button data-score="b-">B -1</button></div>
-          <div class="row"><button id="startClock">START</button><button id="stopClock">STOP</button><button id="resetClock">RESET</button></div>
-          <div class="row"><input id="addedTime" type="number" min="0" placeholder="Temps additionnel (min)"><button id="publishAdded">PUBLIER</button></div>
-          <div class="row"><button id="showDisplay">AFFICHER</button><button id="hideDisplay">RETIRER</button><button id="fitDisplay">FIXER PLEIN ÉCRAN</button></div>
-          <label>Taille générale <input id="scale" type="range" min="50" max="140" value="100"></label>
-          <div class="row"><label>Score <input id="scoreColor" type="color" value="#ffffff"></label><label>Fond <input id="scoreBg" type="color" value="#0b1220"></label><label>Chrono <input id="clockColor" type="color" value="#ffffff"></label></div>
-          <button id="updateMatch">METTRE À JOUR</button>
-        </section>
+       <section class="card">
+  <h2>⚽ AFFICHAGE TV</h2>
+
+  <div class="row">
+    <input id="teamAInput" placeholder="Équipe A">
+    <input id="teamBInput" placeholder="Équipe B">
+  </div>
+
+  <div class="row">
+    <button data-score="a+">A +1</button>
+    <button data-score="a-">A -1</button>
+    <button data-score="b+">B +1</button>
+    <button data-score="b-">B -1</button>
+  </div>
+
+  <div class="row">
+    <button id="startClock">START</button>
+    <button id="stopClock">STOP</button>
+    <button id="resetClock">RESET</button>
+  </div>
+
+  <div class="row">
+    <input id="addedTime" type="number" min="0" placeholder="Temps additionnel (min)">
+    <button id="publishAdded">PUBLIER</button>
+  </div>
+
+  <h3>🎨 COULEURS DU TABLEAU</h3>
+
+  <div class="row">
+    <label>
+      Nom Équipe A
+      <input id="teamAColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Fond Équipe A
+      <input id="teamABg" type="color" value="#0b1220">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Nom Équipe B
+      <input id="teamBColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Fond Équipe B
+      <input id="teamBBg" type="color" value="#0b1220">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Nombres du score
+      <input id="scoreColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Fond du score
+      <input id="scoreBg" type="color" value="#0b1220">
+    </label>
+  </div>
+
+  <h3>📍 POSITION DE L'AFFICHAGE</h3>
+
+  <label>
+    Gauche ↔ Droite
+    <input id="positionX" type="range" min="0" max="100" value="50">
+  </label>
+
+  <label>
+    Haut ↕ Bas
+    <input id="positionY" type="range" min="0" max="100" value="50">
+  </label>
+
+  <div class="row">
+    <button id="showDisplay">AFFICHER</button>
+    <button id="hideDisplay">RETIRER</button>
+    <button id="fitDisplay">PLEIN ÉCRAN</button>
+    <button id="fixDisplay">📌 FIXER L’AFFICHAGE</button>
+  </div>
+
+  <label>
+    Taille générale
+    <input id="scale" type="range" min="50" max="140" value="100">
+  </label>
+
+  <div class="row">
+    <label>
+      Chrono
+      <input id="clockColor" type="color" value="#ffffff">
+    </label>
+  </div>
+
+  <button id="updateMatch">METTRE À JOUR</button>
+</section>
 
         <section class="card"><h2>🖼️ FOND D’ÉCRAN TV</h2>
           <p class="hint">Cette image devient le fond de l’écran TV des spectateurs. Elle ne change pas l’arrière-plan du panneau Admin.</p>
