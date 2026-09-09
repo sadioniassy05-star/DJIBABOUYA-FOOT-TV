@@ -111,8 +111,13 @@ $("scoreboard").style.background=state.colors.scoreBg;
  const v=$("directVideo"); const f=$("directFrame");
  if(state.twitch?.active){
   v.classList.add("hidden");
-  f.classList.remove("hidden");
   ensureTwitchPlayer();
+
+  if(twitchIsLive){
+    f.classList.remove("hidden");
+  }else{
+    f.classList.add("hidden");
+  }
    
  }else if(state.directUrl){
    twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;
