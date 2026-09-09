@@ -54,7 +54,7 @@ function initTwitchPlayer(channel){
     });
     twitchPlayer.addEventListener(Twitch.Player.PLAYBACK_BLOCKED,()=>{});
     return true;
-  }catch(e){
+  }catch(e){ 
     twitchPlayer=null;
     setTwitchVisibility(false);
     return false;
