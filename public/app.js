@@ -65,8 +65,9 @@ function initTwitchPlayer(channel){
     });
 
     twitchPlayer.addEventListener(Twitch.Player.OFFLINE,()=>{
-      setTwitchVisibility(false);
-    });
+  twitchIsLive=false;
+  $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+});
 
     twitchPlayer.addEventListener(Twitch.Player.PLAYBACK_BLOCKED,()=>{});
 
