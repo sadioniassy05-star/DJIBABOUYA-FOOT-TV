@@ -96,8 +96,16 @@ function render(){
  $("teamA").textContent=state.teamA;$("teamB").textContent=state.teamB;$("scoreA").textContent=state.scoreA;$("scoreB").textContent=state.scoreB;
  $("clock").textContent=fmt(currentClock())+(state.addedTime?` +${state.addedTime}`:"");
  $("scoreboard").style.display=state.display.visible?"grid":"none";$("scoreboard").style.transform=`translateX(-50%) scale(${state.display.scale/100})`;
- $("scoreA").style.color=state.colors.score;$("scoreB").style.color=state.colors.score;$("clock").style.color=state.colors.clock;
- $("scoreboard").style.background=state.colors.scoreBg;
+ $("scoreA").style.color=state.colors.score;
+$("scoreB").style.color=state.colors.score;
+$("clock").style.color=state.colors.clock;
+
+$("teamA").style.color=state.colors.teamA;
+$("teamB").style.color=state.colors.teamB;
+$("teamA").style.background=state.colors.teamABg;
+$("teamB").style.background=state.colors.teamBBg;
+
+$("scoreboard").style.background=state.colors.scoreBg;
  const v=$("directVideo"); const f=$("directFrame");
  if(state.twitch?.active){
    v.classList.add("hidden");
