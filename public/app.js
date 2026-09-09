@@ -13,13 +13,11 @@ function setTwitchVisibility(live){
 
   const f=$("directFrame");
 
-  // Le lecteur Twitch reste toujours visible.
-  // Twitch affiche lui-même son état hors ligne/en ligne.
-  f.classList.remove("hidden");
-
   if(live){
+    f.classList.remove("hidden");
     $("liveBadge").textContent="● DIRECT — BANIALFATY";
   }else{
+    f.classList.add("hidden");
     $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
   }
 }
