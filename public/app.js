@@ -111,8 +111,9 @@ $("teamB").style.background=state.colors.teamBBg;
 $("scoreboard").style.background=state.colors.scoreBg;
  const v=$("directVideo"); const f=$("directFrame");
  if(state.twitch?.active){
-   v.classList.add("hidden");
-   ensureTwitchPlayer();
+  v.classList.add("hidden");
+  f.classList.remove("hidden");
+  ensureTwitchPlayer();
    
  }else if(state.directUrl){
    twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;
