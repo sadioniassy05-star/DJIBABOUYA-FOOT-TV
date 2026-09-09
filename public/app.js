@@ -24,38 +24,60 @@ function setTwitchVisibility(live){
   }
 }
 function initTwitchPlayer(channel){
-  const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/ ,"");
+  const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/,"");
+
   if(!window.Twitch || !window.Twitch.Player) return false;
-  if(twitchPlayer && twitchReady){
+
+  // Si le lecteur existe déjà, on ne le recrée jamais.
+  if(twitchPlayer){
     if(twitchChannelLoaded!==ch){
       twitchChannelLoaded=ch;
-      try{twitchPlayer.setChannel(ch);}catch(e){}
+      try{
+        twitchPlayer.setChannel(ch);
+      }catch(e){}
     }
     return true;
   }
+
   twitchChannelLoaded=ch;
   twitchReady=false;
+
   const host=$("twitchPlayer");
+  if(!host) return false;
+
   host.innerHTML="";
+
   try{
     twitchPlayer=new Twitch.Player("twitchPlayer",{
-      width:"100%",height:"100%",channel:ch,
-      parent:[twitchParent()],autoplay:true,muted:true
+      width:"100%",
+      height:"100%",
+      channel:ch,
+      parent:[twitchParent()],
+      autoplay:true,
+      muted:true
     });
+
     twitchPlayer.addEventListener(Twitch.Player.READY,()=>{
       twitchReady=true;
     });
+
     twitchPlayer.addEventListener(Twitch.Player.ONLINE,()=>{
       setTwitchVisibility(true);
       try{twitchPlayer.play();}catch(e){}
     });
+
     twitchPlayer.addEventListener(Twitch.Player.OFFLINE,()=>{
       setTwitchVisibility(false);
     });
+
     twitchPlayer.addEventListener(Twitch.Player.PLAYBACK_BLOCKED,()=>{});
+
     return true;
-  }catch(e){ 
+
+  }catch(e){
     twitchPlayer=null;
+    twitchReady=false;
+    twitchChannelLoaded="";
     setTwitchVisibility(false);
     return false;
   }
