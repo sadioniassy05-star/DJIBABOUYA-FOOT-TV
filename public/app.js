@@ -159,7 +159,19 @@ $("loginBtn").onclick=async()=>{const x=await api("/api/login",{method:"POST",bo
 $("password").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
 $("logoutBtn").onclick=async()=>{await fetch("/api/logout");logged=false;$("controls").classList.add("hidden");$("loginBox").classList.remove("hidden")};
 document.querySelectorAll("[data-score]").forEach(b=>b.onclick=async()=>{let k=b.dataset.score;let patch={};if(k==="a+")patch.scoreA=state.scoreA+1;if(k==="a-")patch.scoreA=Math.max(0,state.scoreA-1);if(k==="b+")patch.scoreB=state.scoreB+1;if(k==="b-")patch.scoreB=Math.max(0,state.scoreB-1);await save(patch)});
-$("updateMatch").onclick=()=>save({teamA:$("teamAInput").value||"ÉQUIPE A",teamB:$("teamBInput").value||"ÉQUIPE B",colors:{score:$("scoreColor").value,scoreBg:$("scoreBg").value,clock:$("clockColor").value}});
+$("updateMatch").onclick=()=>save({
+  teamA:$("teamAInput").value||"ÉQUIPE A",
+  teamB:$("teamBInput").value||"ÉQUIPE B",
+  colors:{
+    score:$("scoreColor").value,
+    scoreBg:$("scoreBg").value,
+    clock:$("clockColor").value,
+    teamA:$("teamAColor").value,
+    teamB:$("teamBColor").value,
+    teamABg:$("teamABg").value,
+    teamBBg:$("teamBBg").value
+  }
+});
 $("startClock").onclick=()=>save({running:true,clock:currentClock(),clockStartedAt:Date.now()});
 $("stopClock").onclick=()=>save({running:false,clock:currentClock(),clockStartedAt:null});
 $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,addedTime:0});
