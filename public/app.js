@@ -98,7 +98,7 @@ function render(){
  $("scoreboard").style.display=state.display.visible?"grid":"none";
 $("scoreboard").style.left=`${state.display.x??50}%`;
 $("scoreboard").style.top=`${state.display.y??9}vh`;
-$("scoreboard").style.transform=`translate(-50%,-50%) scale(${state.display.scale/100})`;
+$("scoreboard").style.transform=`translateX(-50%) scale(${state.display.scale/100})`;
  $("scoreA").style.color=state.colors.score;
 $("scoreB").style.color=state.colors.score;
 $("clock").style.color=state.colors.clock;
@@ -190,6 +190,13 @@ $("stopClock").onclick=()=>save({running:false,clock:currentClock(),clockStarted
 $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,addedTime:0});
 $("publishAdded").onclick=()=>save({addedTime:Number($("addedTime").value||0)});
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
+$("fixDisplay").onclick=()=>save({
+  display:{
+    x:Number($("positionX").value),
+    y:Number($("positionY").value),
+    fixed:true
+  }
+});
 $("scale").oninput=e=>save({display:{scale:Number(e.target.value)}});
 $("positionX").oninput=e=>{
   state.display.x=Number(e.target.value);
