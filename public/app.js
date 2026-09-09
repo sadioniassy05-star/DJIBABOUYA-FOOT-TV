@@ -9,18 +9,19 @@ function fmt(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/6
 function currentClock(){if(!state)return 0;if(!state.running||!state.clockStartedAt)return state.clock;return state.clock+Math.floor((Date.now()-state.clockStartedAt)/1000)}
 function twitchParent(){ return window.location.hostname || "localhost"; }
 function setTwitchVisibility(live){
-  if(live){
-    twitchIsLive=true;
-    const f=$("directFrame");
-    f.classList.remove("hidden");
-    $("liveBadge").textContent="● DIRECT — BANIALFATY";
-    return;
-  }
+  twitchIsLive=!!live;
 
-  // Ne masque pas immédiatement le lecteur lors d'une perte
-  // temporaire du signal Twitch.
-  twitchIsLive=false;
-  $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+  const f=$("directFrame");
+
+  // Le lecteur Twitch reste toujours visible.
+  // Twitch affiche lui-même son état hors ligne/en ligne.
+  f.classList.remove("hidden");
+
+  if(live){
+    $("liveBadge").textContent="● DIRECT — BANIALFATY";
+  }else{
+    $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+  }
 }
 function initTwitchPlayer(channel){
   const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/ ,"");
@@ -79,7 +80,7 @@ function render(){
  if(state.twitch?.active){
    v.classList.add("hidden");
    ensureTwitchPlayer();
-   setTwitchVisibility(twitchIsLive);
+   
  }else if(state.directUrl){
    twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;
    if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
