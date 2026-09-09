@@ -6,7 +6,7 @@ const DEFAULT_STATE = {
   teamA:"ÉQUIPE A", teamB:"ÉQUIPE B", scoreA:0, scoreB:0,
   clock:0, running:false, clockStartedAt:null, addedTime:0,
   colors:{score:"#ffffff", scoreBg:"#0b1220", clock:"#ffffff", added:"#ffd166", teamA:"#ffffff", teamB:"#ffffff"},
-  display:{visible:true, scale:100, width:100, height:100},
+  display:{visible:true, scale:100, width:100, height:100, x:50, y:9, fixed:false},
   directUrl:"",
   directType:"video",
   twitch:{active:true,channel:"banialfaty"},
