@@ -11,9 +11,15 @@ function twitchParent(){ return window.location.hostname || "localhost"; }
 function setTwitchVisibility(live){
   twitchIsLive=!!live;
   const f=$("directFrame");
-  if(state?.twitch?.active && twitchIsLive){
+
+  if(state?.twitch?.active){
     f.classList.remove("hidden");
-    $("liveBadge").textContent="● DIRECT — BANIALFATY";
+
+    if(twitchIsLive){
+      $("liveBadge").textContent="● DIRECT — BANIALFATY";
+    }else{
+      $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+    }
   }else{
     f.classList.add("hidden");
     $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
