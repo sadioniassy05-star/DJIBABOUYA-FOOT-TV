@@ -170,6 +170,7 @@ $("clockColor").value=state.colors.clock||"#ffffff";
 $("directUrl").value=state.directUrl;$("directType").value=state.directType;
  $("adTitle").value=state.ad.title;$("adText").value=state.ad.text;$("adUrl").value=state.ad.url;$("adDuration").value=state.ad.duration;
  $("replayUrl").value=state.replay.url;$("replayStart").value=state.replay.start;$("replayEnd").value=state.replay.end;$("replaySpeed").value=state.replay.speed;
+  $("addedTimeMessageDuration").value=state.addedTimeMessageDuration??5;
 }
 $("adminBtn").onclick=()=>{$("adminPanel").classList.remove("hidden");$("loginBox").classList.remove("hidden");$("controls").classList.add("hidden");$("password").focus()};
 $("closeAdmin").onclick=()=>$("adminPanel").classList.add("hidden");
