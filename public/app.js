@@ -189,7 +189,7 @@ $("updateMatch").onclick=()=>save({
     teamABg:$("teamABg").value,
     teamBBg:$("teamBBg").value
   }
-});
+}); 
 $("startClock").onclick=()=>save({running:true,clock:currentClock(),clockStartedAt:Date.now()});
 $("stopClock").onclick=()=>save({running:false,clock:currentClock(),clockStartedAt:null});
 $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,addedTime:0});
