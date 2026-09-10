@@ -94,6 +94,18 @@ function render(){
  const photo=$("tv").querySelector(".tv-photo"); if(photo) photo.style.backgroundImage=`url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
  $("teamA").textContent=state.teamA;$("teamB").textContent=state.teamB;$("scoreA").textContent=state.scoreA;$("scoreB").textContent=state.scoreB;
 $("clock").textContent=fmt(currentClock());
+  const addedClock=$("addedClock");
+
+if(state.addedTimeActive || state.addedTimeElapsed>0){
+  const elapsed=state.addedTimeActive
+    ? Number(state.addedTimeElapsed||0)+Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000)
+    : Number(state.addedTimeElapsed||0);
+
+  addedClock.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
+  addedClock.classList.remove("hidden");
+}else{
+  addedClock.classList.add("hidden");
+}
  $("scoreboard").style.display=state.display.visible?"grid":"none";
 $("scoreboard").style.left=`${state.display.x??50}%`;
 $("scoreboard").style.top=`${state.display.y??9}%`;
@@ -214,6 +226,67 @@ $("publishAdded").onclick=async()=>{
     message:m>0
       ?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`
       :""
+  });
+};
+$("startAddedTime").onclick=()=>{
+  if(!state?.addedTime)return;
+
+  save({
+    addedTimeActive:true,
+    addedTimeStartedAt:Date.now(),
+    addedTimePausedAt:null,
+    addedTimeOverLimit:false,
+    addedTimeFinished:false
+  });
+};
+
+$("pauseAddedTime").onclick=()=>{
+  if(!state?.addedTimeActive||!state?.addedTimeStartedAt)return;
+
+  const elapsed=
+    Number(state.addedTimeElapsed||0)+
+    Math.floor((Date.now()-state.addedTimeStartedAt)/1000);
+
+  save({
+    addedTimeActive:false,
+    addedTimeStartedAt:null,
+    addedTimePausedAt:Date.now(),
+    addedTimeElapsed:Math.min(
+      elapsed,
+      Number(state.addedTime||0)*60
+    )
+  });
+};
+
+$("resumeAddedTime").onclick=()=>{
+  if(!state?.addedTime||state.addedTimeOverLimit)return;
+
+  save({
+    addedTimeActive:true,
+    addedTimeStartedAt:Date.now(),
+    addedTimePausedAt:null,
+    addedTimeFinished:false
+  });
+};
+
+$("finishAddedTime").onclick=()=>{
+  save({
+    addedTimeActive:false,
+    addedTimeStartedAt:null,
+    addedTimePausedAt:null,
+    addedTimeFinished:true
+  });
+};
+
+$("returnNormalClock").onclick=()=>{
+  save({
+    addedTimeActive:false,
+    addedTimeStartedAt:null,
+    addedTimePausedAt:null,
+    addedTimeElapsed:0,
+    addedTimeOverLimit:false,
+    addedTimeFinished:false,
+    message:""
   });
 };
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
