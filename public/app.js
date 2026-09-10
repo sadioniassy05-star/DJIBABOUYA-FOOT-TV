@@ -263,7 +263,7 @@ $("pauseAddedTime").onclick=()=>{
 
 $("resumeAddedTime").onclick=()=>{
   if(!state?.addedTime)return;
-  if(state.addedTimeOverLimit)return;
+  if(state.addedTimeFinished)return;
 
   const elapsed=Number(state.addedTimeElapsed||0);
   const limit=Number(state.addedTime||0)*60;
@@ -383,14 +383,14 @@ setInterval(()=>{
 
   const limit=Number(state.addedTime||0)*60;
 
-  if(elapsed>=limit){
+  if(elapsed>=limit && !state.addedTimeOverLimit){
     save({
       addedTimeActive:false,
       addedTimeStartedAt:null,
       addedTimePausedAt:null,
       addedTimeElapsed:limit,
       addedTimeOverLimit:true,
-      addedTimeFinished:true
+      addedTimeFinished:false
     });
   }
 },250);
