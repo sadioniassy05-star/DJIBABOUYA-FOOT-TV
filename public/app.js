@@ -93,7 +93,7 @@ function render(){
  if(!state)return;
  const photo=$("tv").querySelector(".tv-photo"); if(photo) photo.style.backgroundImage=`url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
  $("teamA").textContent=state.teamA;$("teamB").textContent=state.teamB;$("scoreA").textContent=state.scoreA;$("scoreB").textContent=state.scoreB;
-$("clock").textContent=state.addedTimeActive?fmt(Math.max(0,Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000))):fmt(currentClock());
+$("clock").textContent=fmt(currentClock());
  $("scoreboard").style.display=state.display.visible?"grid":"none";
 $("scoreboard").style.left=`${state.display.x??50}%`;
 $("scoreboard").style.top=`${state.display.y??9}%`;
@@ -193,8 +193,29 @@ $("updateMatch").onclick=()=>save({
 }); 
 $("startClock").onclick=()=>save({running:true,clock:currentClock(),clockStartedAt:Date.now()});
 $("stopClock").onclick=()=>save({running:false,clock:currentClock(),clockStartedAt:null});
-$("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,addedTime:0});
-$("publishAdded").onclick=()=>{const m=Number($("addedTime").value||0);const h=Number($("addedTimeHalf").value||1);const normalClock=currentClock();save({addedTime:m,addedTimeHalf:h,addedTimeNormalClock:normalClock,addedTimeMessageDuration:Number($("addedTimeMessageDuration").value||0),addedTimeMessageStartedAt:Date.now(),addedTimeActive:false,addedTimeFinished:false,message:m>0?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`:""});};
+$("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null});
+$("publishAdded").onclick=async()=>{
+  const m=Number($("addedTime").value||0);
+  const h=Number($("addedTimeHalf").value||1);
+  const normalClock=currentClock();
+
+  await save({
+    addedTime:m,
+    addedTimeHalf:h,
+    addedTimeNormalClock:normalClock,
+    addedTimeActive:false,
+    addedTimeStartedAt:null,
+    addedTimePausedAt:null,
+    addedTimeElapsed:0,
+    addedTimeOverLimit:false,
+    addedTimeFinished:false,
+    addedTimeMessageStartedAt:Date.now(),
+    addedTimeMessageDuration:Number($("addedTimeMessageDuration").value||5),
+    message:m>0
+      ?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`
+      :""
+  });
+};
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
 $("fixDisplay").onclick=()=>save({
   display:{
