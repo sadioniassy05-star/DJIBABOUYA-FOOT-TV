@@ -67,8 +67,16 @@
     <button id="resetClock">RESET</button>
   </div>
 
-  <div class="row">
-    <input id="addedTime" type="number" min="0" placeholder="Temps additionnel (min)">
+ <div class="row">
+    <select id="addedTimeHalf">
+      <option value="1">PREMIÈRE MI-TEMPS</option>
+      <option value="2">DEUXIÈME MI-TEMPS</option>
+    </select>
+
+    <input id="addedTime" type="number" min="0" max="30" placeholder="Temps additionnel (min)">
+
+    <input id="addedTimeMessageDuration" type="number" min="0" max="30" value="5" placeholder="Message (sec)">
+
     <button id="publishAdded">PUBLIER</button>
   </div>
 
