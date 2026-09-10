@@ -194,7 +194,7 @@ $("updateMatch").onclick=()=>save({
 $("startClock").onclick=()=>save({running:true,clock:currentClock(),clockStartedAt:Date.now()});
 $("stopClock").onclick=()=>save({running:false,clock:currentClock(),clockStartedAt:null});
 $("resetClock").onclick=()=>save({running:false,clock:0,clockStartedAt:null,addedTime:0});
-$("publishAdded").onclick=()=>{const m=Number($("addedTime").value||0);const h=Number($("addedTimeHalf").value||1);save({addedTime:m,addedTimeHalf:h,addedTimeMessageDuration:Number($("addedTimeMessageDuration").value||0),addedTimeMessageStartedAt:Date.now(),addedTimeActive:false,message:m>0?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`:""});};
+$("publishAdded").onclick=()=>{const m=Number($("addedTime").value||0);const h=Number($("addedTimeHalf").value||1);const normalClock=currentClock();save({addedTime:m,addedTimeHalf:h,addedTimeNormalClock:normalClock,addedTimeMessageDuration:Number($("addedTimeMessageDuration").value||0),addedTimeMessageStartedAt:Date.now(),addedTimeActive:false,addedTimeFinished:false,message:m>0?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`:""});};
 $("showDisplay").onclick=()=>save({display:{visible:true}});$("hideDisplay").onclick=()=>save({display:{visible:false}});$("fitDisplay").onclick=()=>save({display:{visible:true,scale:100,width:100,height:100}});
 $("fixDisplay").onclick=()=>save({
   display:{
@@ -232,5 +232,5 @@ $("publishMessage").onclick=()=>save({message:$("messageInput").value});
 setInterval(()=>{if(state){$("clock").textContent=state.addedTimeActive?fmt(Math.max(0,Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000))):fmt(currentClock())}},1000);
 setInterval(refresh,1500);
 setInterval(()=>{if(state?.twitch?.active && (!twitchPlayer || !twitchReady)) ensureTwitchPlayer()},2000);
-setInterval(()=>{if(!state||!state.addedTime)return;if(!state.addedTimeActive&&state.addedTimeMessageStartedAt){const elapsed=Date.now()-state.addedTimeMessageStartedAt;const duration=Number(state.addedTimeMessageDuration||0)*1000;if(elapsed>=duration){save({addedTimeActive:true,addedTimeStartedAt:Date.now(),clock:0,running:false,clockStartedAt:null});}}else if(state.addedTimeActive&&state.addedTimeStartedAt){const elapsed=Math.floor((Date.now()-state.addedTimeStartedAt)/1000);const limit=Number(state.addedTime||0)*60;if(elapsed>=limit){save({addedTimeActive:false,addedTimeStartedAt:null,clock:0,running:false,clockStartedAt:null});}}},250);
+setInterval(()=>{if(!state||!state.addedTime||!state.addedTimeActive||!state.addedTimeStartedAt)return;const elapsed=Math.floor((Date.now()-state.addedTimeStartedAt)/1000);const limit=Number(state.addedTime||0)*60;if(!state.addedTimeOverLimit&&elapsed>=limit){save({addedTimeActive:false,addedTimeOverLimit:true,addedTimeFinished:true,addedTimeElapsed:limit,running:false,clockStartedAt:null});}},250);
 refresh();
