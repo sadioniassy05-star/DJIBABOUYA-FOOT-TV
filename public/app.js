@@ -231,15 +231,17 @@ $("publishAdded").onclick=async()=>{
 $("startAddedTime").onclick=()=>{
   if(!state?.addedTime)return;
 
+  const limit=Number(state.addedTime)*60;
+
   save({
     addedTimeActive:true,
     addedTimeStartedAt:Date.now(),
     addedTimePausedAt:null,
+    addedTimeElapsed:0,
     addedTimeOverLimit:false,
     addedTimeFinished:false
   });
 };
-
 $("pauseAddedTime").onclick=()=>{
   if(!state?.addedTimeActive||!state?.addedTimeStartedAt)return;
 
@@ -247,19 +249,35 @@ $("pauseAddedTime").onclick=()=>{
     Number(state.addedTimeElapsed||0)+
     Math.floor((Date.now()-state.addedTimeStartedAt)/1000);
 
+  const limit=Number(state.addedTime||0)*60;
+
   save({
     addedTimeActive:false,
     addedTimeStartedAt:null,
     addedTimePausedAt:Date.now(),
-    addedTimeElapsed:Math.min(
-      elapsed,
-      Number(state.addedTime||0)*60
-    )
+    addedTimeElapsed:Math.min(elapsed,limit),
+    addedTimeOverLimit:elapsed>=limit,
+    addedTimeFinished:elapsed>=limit
   });
 };
 
 $("resumeAddedTime").onclick=()=>{
-  if(!state?.addedTime||state.addedTimeOverLimit)return;
+  if(!state?.addedTime)return;
+  if(state.addedTimeOverLimit)return;
+
+  const elapsed=Number(state.addedTimeElapsed||0);
+  const limit=Number(state.addedTime||0)*60;
+
+  if(elapsed>=limit){
+    save({
+      addedTimeActive:false,
+      addedTimeStartedAt:null,
+      addedTimeOverLimit:true,
+      addedTimeFinished:true,
+      addedTimeElapsed:limit
+    });
+    return;
+  }
 
   save({
     addedTimeActive:true,
@@ -270,10 +288,22 @@ $("resumeAddedTime").onclick=()=>{
 };
 
 $("finishAddedTime").onclick=()=>{
+  let elapsed=Number(state?.addedTimeElapsed||0);
+
+  if(state?.addedTimeActive&&state?.addedTimeStartedAt){
+    elapsed+=Math.floor(
+      (Date.now()-state.addedTimeStartedAt)/1000
+    );
+  }
+
+  const limit=Number(state?.addedTime||0)*60;
+
   save({
     addedTimeActive:false,
     addedTimeStartedAt:null,
     addedTimePausedAt:null,
+    addedTimeElapsed:Math.min(elapsed,limit),
+    addedTimeOverLimit:true,
     addedTimeFinished:true
   });
 };
@@ -323,7 +353,25 @@ $("removeLineup").onclick=()=>save({lineup:{active:false}});
 $("publishPoster").onclick=()=>save({poster:{active:true,competition:$("competition").value,team1:$("posterTeam1").value||state.teamA,team2:$("posterTeam2").value||state.teamB,date:$("posterDate").value,time:$("posterTime").value,stadium:$("stadium").value,photo:$("posterPhoto").value,color:$("posterColor").value,style:$("posterStyle").value}});
 $("removePoster").onclick=()=>save({poster:{active:false}});
 $("publishMessage").onclick=()=>save({message:$("messageInput").value});
-setInterval(()=>{if(state){$("clock").textContent=state.addedTimeActive?fmt(Math.max(0,Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000))):fmt(currentClock())}},1000);
+setInterval(()=>{
+  if(!state)return;
+
+  $("clock").textContent=fmt(currentClock());
+
+  const e=$("addedClock");
+  if(!e)return;
+
+  if(state.addedTimeActive && state.addedTimeStartedAt){
+    const elapsed=Math.min(
+      Number(state.addedTimeElapsed||0)+
+      Math.floor((Date.now()-state.addedTimeStartedAt)/1000),
+      Number(state.addedTime||0)*60
+    );
+
+    e.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
+    e.classList.remove("hidden");
+  }
+},1000);
 setInterval(refresh,1500);
 setInterval(()=>{if(state?.twitch?.active && (!twitchPlayer || !twitchReady)) ensureTwitchPlayer()},2000);
 setInterval(()=>{
