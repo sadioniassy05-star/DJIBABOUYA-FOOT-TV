@@ -253,5 +253,24 @@ $("publishMessage").onclick=()=>save({message:$("messageInput").value});
 setInterval(()=>{if(state){$("clock").textContent=state.addedTimeActive?fmt(Math.max(0,Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000))):fmt(currentClock())}},1000);
 setInterval(refresh,1500);
 setInterval(()=>{if(state?.twitch?.active && (!twitchPlayer || !twitchReady)) ensureTwitchPlayer()},2000);
-setInterval(()=>{if(!state||!state.addedTime||!state.addedTimeActive||!state.addedTimeStartedAt)return;const elapsed=Math.floor((Date.now()-state.addedTimeStartedAt)/1000);const limit=Number(state.addedTime||0)*60;if(!state.addedTimeOverLimit&&elapsed>=limit){save({addedTimeActive:false,addedTimeOverLimit:true,addedTimeFinished:true,addedTimeElapsed:limit,running:false,clockStartedAt:null});}},250);
+setInterval(()=>{
+  if(!state || !state.addedTime || !state.addedTimeActive || !state.addedTimeStartedAt)return;
+
+  const elapsed =
+    Number(state.addedTimeElapsed||0) +
+    Math.floor((Date.now()-state.addedTimeStartedAt)/1000);
+
+  const limit=Number(state.addedTime||0)*60;
+
+  if(elapsed>=limit){
+    save({
+      addedTimeActive:false,
+      addedTimeStartedAt:null,
+      addedTimePausedAt:null,
+      addedTimeElapsed:limit,
+      addedTimeOverLimit:true,
+      addedTimeFinished:true
+    });
+  }
+},250);
 refresh();
