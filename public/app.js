@@ -147,6 +147,14 @@ let goalAnimationFrame=null;
 function renderGoal(){
   const e=$("goal");
   if(!e)return;
+
+  const ga=state?.goalAnimation;
+
+  if(ga?.active && ga.startedAt){
+    e.classList.remove("hidden");
+    return;
+  }
+
   e.classList.add("hidden");
 }
 
