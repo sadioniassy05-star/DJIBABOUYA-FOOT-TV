@@ -25,6 +25,29 @@ addedTimeMessageDuration:5,
   replay:{active:false,url:"",speed:0.5,start:0,end:30},
   substitution:{active:false,outName:"",outNumber:"",outPhoto:"",inName:"",inNumber:"",inPhoto:"",duration:10},
   goals:[],
+    goalAnimation:{
+    id:0,
+    active:false,
+    team:"",
+    player:"",
+    minute:"",
+    oldScoreA:0,
+    oldScoreB:0,
+    newScoreA:0,
+    newScoreB:0,
+    startedAt:0,
+    duration:8,
+    colors:{
+      bar:"#1236d6",
+      stripe:"#ffffff",
+      text:"#ffffff",
+      background:"#1236d6",
+      clock:"#ffffff",
+      score:"#ffffff",
+      team:"#ffffff",
+      icon:"#ffffff"
+    }
+  },
   lineup:{active:false,formation:"4-3-3",team:"A",players:[]},
   poster:{active:false,competition:"",team1:"ÉQUIPE A",team2:"ÉQUIPE B",date:"",time:"",stadium:"",logo1:"",logo2:"",photo:"",color:"#f59e0b",style:"modern"},
   message:"",
@@ -34,7 +57,7 @@ addedTimeMessageDuration:5,
 
 function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json","cache-control":"no-store"}})}
 function htmlRedirect(){return new Response(null,{status:302,headers:{location:"/"}})}
-function merge(a,b){return {...a,...b,twitch:{...a.twitch,...(b.twitch||{})},colors:{...a.colors,...(b.colors||{})},display:{...a.display,...(b.display||{})},ad:{...a.ad,...(b.ad||{})},replay:{...a.replay,...(b.replay||{})},substitution:{...a.substitution,...(b.substitution||{})},lineup:{...a.lineup,...(b.lineup||{})},poster:{...a.poster,...(b.poster||{})}}}
+function merge(a,b){return {...a,...b,twitch:{...a.twitch,...(b.twitch||{})},colors:{...a.colors,...(b.colors||{})},display:{...a.display,...(b.display||{})},ad:{...a.ad,...(b.ad||{})},replay:{...a.replay,...(b.replay||{})},substitution:{...a.substitution,...(b.substitution||{})},lineup:{...a.lineup,...(b.lineup||{})},poster:{...a.poster,...(b.poster||{})},goalAnimation:{...a.goalAnimation,...(b.goalAnimation||{}),colors:{...a.goalAnimation.colors,...(b.goalAnimation?.colors||{})}}}}
 async function sha256(s){const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 async function makeToken(){const payload={exp:Math.floor(Date.now()/1000)+SESSION_TTL,n:crypto.randomUUID()};const raw=btoa(JSON.stringify(payload));const sig=await sha256(raw+ADMIN_PASSWORD_SHA256);return raw+"."+sig}
 async function validSession(req){
