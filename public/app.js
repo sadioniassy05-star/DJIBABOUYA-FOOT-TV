@@ -166,6 +166,64 @@ function updateGoalScoreDisplay(showNew){
   $("scoreA").textContent=a;
   $("scoreB").textContent=b;
 }
+function goalAnimationTick(){
+  goalAnimationFrame=null;
+
+  const e=$("goal");
+  if(!e)return;
+
+  const ga=state?.goalAnimation;
+
+  if(!ga?.active || !ga.startedAt){
+    e.classList.add("hidden");
+    renderedGoalAnimationId=0;
+    updateGoalScoreDisplay(true);
+    return;
+  }
+
+  const duration=Math.max(2,Number(ga.duration||4));
+  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+
+  if(elapsed>=duration){
+    e.classList.add("hidden");
+    updateGoalScoreDisplay(true);
+    return;
+  }
+
+  const progress=Math.max(0,Math.min(1,elapsed/duration));
+
+  const transitionEnd=0.25;
+  const goalEnd=0.68;
+
+  let stage="transition";
+
+  if(progress>=goalEnd){
+    stage="score";
+  }else if(progress>=transitionEnd){
+    stage="goal";
+  }
+
+  const animation=e.querySelector(".goal-animation");
+
+  if(animation){
+    animation.dataset.stage=stage;
+
+    animation.style.setProperty(
+      "--goal-progress",
+      progress
+    );
+
+    const clock=animation.querySelector(".goal-clock");
+
+    if(clock){
+      clock.textContent=fmt(currentClock());
+    }
+  }
+
+  updateGoalScoreDisplay(stage==="score");
+
+  goalAnimationFrame=requestAnimationFrame(goalAnimationTick);
+}
 
 function renderGoalAnimation(){
   const e=$("goal");
@@ -183,21 +241,6 @@ function renderGoalAnimation(){
 
     renderedGoalAnimationId=0;
     updateGoalScoreDisplay(true);
-    return;
-  }
-
-  const duration=Math.max(2,Number(ga.duration||4));
-  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
-
-  if(elapsed>=duration){
-    e.classList.add("hidden");
-    updateGoalScoreDisplay(true);
-
-    if(goalAnimationFrame){
-      cancelAnimationFrame(goalAnimationFrame);
-      goalAnimationFrame=null;
-    }
-
     return;
   }
 
@@ -261,40 +304,11 @@ function renderGoalAnimation(){
     e.classList.remove("hidden");
   }
 
-  const progress=Math.max(0,Math.min(1,elapsed/duration));
-
-  const transitionEnd=0.25;
-  const goalEnd=0.68;
-
-  let stage="transition";
-
-  if(progress>=goalEnd){
-    stage="score";
-  }else if(progress>=transitionEnd){
-    stage="goal";
+  if(goalAnimationFrame===null){
+    goalAnimationFrame=requestAnimationFrame(goalAnimationTick);
   }
-
-  const animation=e.querySelector(".goal-animation");
-
-  if(animation){
-    animation.dataset.stage=stage;
-
-    animation.style.setProperty(
-      "--goal-progress",
-      progress
-    );
-
-    const clock=animation.querySelector(".goal-clock");
-
-    if(clock){
-      clock.textContent=fmt(currentClock());
-    }
-  }
-
-  updateGoalScoreDisplay(stage==="score");
-
-  goalAnimationFrame=requestAnimationFrame(renderGoalAnimation);
 }
+
 function renderSub(){const s=state.substitution,e=$("substitution");if(!s.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`⬅ ${esc(s.outName)} (#${esc(s.outNumber)})<br>➡ ${esc(s.inName)} (#${esc(s.inNumber)})`}
 function renderLineup(){const l=state.lineup,e=$("lineup");if(!l.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<h2>COMPOSITION ${esc(l.formation)} — ${esc(l.team==="A"?state.teamA:state.teamB)}</h2><div class="players-grid">${(l.players||[]).map((x,i)=>`<div class="player">${i+1}. ${esc(x)}</div>`).join("")}</div>`}
 function renderReplay(){const r=state.replay,e=$("replay"),v=$("replayVideo");if(!r.active||!r.url){e.classList.add("hidden");return}e.classList.remove("hidden");if(v.src!==r.url)v.src=r.url;v.playbackRate=r.speed||1}
