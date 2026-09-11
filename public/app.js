@@ -332,6 +332,15 @@ $("positionY").value=state.display.y??9;
 $("scoreColor").value=state.colors.score||"#ffffff";
 $("scoreBg").value=state.colors.scoreBg||"#0b1220";
 $("clockColor").value=state.colors.clock||"#ffffff";
+  $("goalBarColor").value=state.goalAnimation?.colors?.bar||"#1236d6";
+$("goalStripeColor").value=state.goalAnimation?.colors?.stripe||"#ffffff";
+$("goalTextColor").value=state.goalAnimation?.colors?.text||"#ffffff";
+$("goalBackgroundColor").value=state.goalAnimation?.colors?.background||"#1236d6";
+$("goalClockColor").value=state.goalAnimation?.colors?.clock||"#ffffff";
+$("goalScoreColor").value=state.goalAnimation?.colors?.score||"#ffffff";
+$("goalTeamColor").value=state.goalAnimation?.colors?.team||"#ffffff";
+$("goalIconColor").value=state.goalAnimation?.colors?.icon||"#ffffff";
+$("goalDuration").value=state.goalAnimation?.duration||4;
 $("directUrl").value=state.directUrl;$("directType").value=state.directType;
  $("adTitle").value=state.ad.title;$("adText").value=state.ad.text;$("adUrl").value=state.ad.url;$("adDuration").value=state.ad.duration;
  $("replayUrl").value=state.replay.url;$("replayStart").value=state.replay.start;$("replayEnd").value=state.replay.end;$("replaySpeed").value=state.replay.speed;
@@ -545,6 +554,33 @@ $("publishGoal").onclick=async()=>{
   });
 };
 $("clearGoals").onclick=()=>save({goals:[]});
+$("resetGoalColors").onclick=async()=>{
+  const colors={
+    bar:"#1236d6",
+    stripe:"#ffffff",
+    text:"#ffffff",
+    background:"#1236d6",
+    clock:"#ffffff",
+    score:"#ffffff",
+    team:"#ffffff",
+    icon:"#ffffff"
+  };
+
+  await save({
+    goalAnimation:{
+      colors
+    }
+  });
+
+  $("goalBarColor").value=colors.bar;
+  $("goalStripeColor").value=colors.stripe;
+  $("goalTextColor").value=colors.text;
+  $("goalBackgroundColor").value=colors.background;
+  $("goalClockColor").value=colors.clock;
+  $("goalScoreColor").value=colors.score;
+  $("goalTeamColor").value=colors.team;
+  $("goalIconColor").value=colors.icon;
+};
 $("publishLineup").onclick=()=>save({lineup:{active:true,formation:$("formation").value,team:$("lineupTeam").value,players:$("players").value.split(/\n/).map(x=>x.trim()).filter(Boolean).slice(0,11)}});
 $("removeLineup").onclick=()=>save({lineup:{active:false}});
 $("publishPoster").onclick=()=>save({poster:{active:true,competition:$("competition").value,team1:$("posterTeam1").value||state.teamA,team2:$("posterTeam2").value||state.teamB,date:$("posterDate").value,time:$("posterTime").value,stadium:$("stadium").value,photo:$("posterPhoto").value,color:$("posterColor").value,style:$("posterStyle").value}});
