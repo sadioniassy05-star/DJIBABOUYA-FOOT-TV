@@ -203,10 +203,79 @@
           <button id="publishSub">PUBLIER LA SUBSTITUTION</button><button id="removeSub">RETIRER</button>
         </section>
 
-        <section class="card"><h2>⚽ BUT / ÉVÉNEMENT</h2>
-          <div class="row"><input id="goalPlayer" placeholder="Nom du joueur"><input id="goalMinute" placeholder="Minute"></div>
-          <button id="publishGoal">PUBLIER LE BUT</button><button id="clearGoals">EFFACER LES RAPPELS</button>
-        </section>
+        <section class="card">
+  <h2>⚽ BUT / ÉVÉNEMENT</h2>
+
+  <select id="goalTeam">
+    <option value="A">ÉQUIPE A — BUT</option>
+    <option value="B">ÉQUIPE B — BUT</option>
+  </select>
+
+  <div class="row">
+    <input id="goalPlayer" placeholder="Nom du joueur">
+    <input id="goalMinute" placeholder="Minute">
+  </div>
+
+  <label>
+    Durée de l'animation
+    <input id="goalDuration" type="number" min="2" max="10" value="4">
+  </label>
+
+  <button id="publishGoal">⚽ PUBLIER LE BUT</button>
+  <button id="clearGoals">EFFACER LES RAPPELS</button>
+
+  <h3>🎨 COULEURS DE L'ANIMATION</h3>
+
+  <div class="row">
+    <label>
+      Barre principale
+      <input id="goalBarColor" type="color" value="#1236d6">
+    </label>
+
+    <label>
+      Bandes animées
+      <input id="goalStripeColor" type="color" value="#ffffff">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Texte GOAL
+      <input id="goalTextColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Fond GOAL
+      <input id="goalBackgroundColor" type="color" value="#1236d6">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Couleur chrono
+      <input id="goalClockColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Couleur score
+      <input id="goalScoreColor" type="color" value="#ffffff">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Couleur équipes
+      <input id="goalTeamColor" type="color" value="#ffffff">
+    </label>
+
+    <label>
+      Couleur icône
+      <input id="goalIconColor" type="color" value="#ffffff">
+    </label>
+  </div>
+
+  <button id="resetGoalColors">↩️ RÉINITIALISER LES COULEURS</button>
+</section>
 
         <section class="card"><h2>👥 COMPOSITION</h2>
           <select id="formation"><option>4-4-2</option><option selected>4-3-3</option><option>3-4-3</option><option>4-2-3-1</option><option>3-5-2</option></select>
