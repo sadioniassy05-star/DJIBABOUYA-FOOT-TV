@@ -141,7 +141,16 @@ $("scoreboard").style.background="transparent";
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 function renderAd(){const a=state.ad;const e=$("ad");if(!a.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.style.color=a.color;e.style.background=a.bg;e.innerHTML=(a.url?`<img src="${esc(a.url)}">`:"")+`<h2>${esc(a.title)}</h2><p>${esc(a.text)}</p>`}
 function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<div class="poster-inner" style="--pc:${p.color};${p.photo?`background-image:linear-gradient(#0f172acc,#0f172acc),url('${esc(p.photo)}');background-size:cover;background-position:center`:''}"><div class="comp">${esc(p.competition)}</div><div class="teams">${esc(p.team1)}<br>VS<br>${esc(p.team2)}</div><div>${esc(p.date)} ${esc(p.time)}</div><div>${esc(p.stadium)}</div></div>`}
-function renderGoal(){const g=state.goals?.at(-1),e=$("goal");if(!g){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`⚽ BUT — ${esc(g.player)} <span>${esc(g.minute)}'</span>`}
+function renderGoal(){
+  const g=state.goals?.at(-1),e=$("goal");
+  if(!g){
+    e.classList.add("hidden");
+    return;
+  }
+
+  e.classList.remove("hidden");
+  e.innerHTML=`⚽ BUT — ${esc(g.player)} <span>${esc(g.minute)}'</span>`;
+}
 function renderSub(){const s=state.substitution,e=$("substitution");if(!s.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`⬅ ${esc(s.outName)} (#${esc(s.outNumber)})<br>➡ ${esc(s.inName)} (#${esc(s.inNumber)})`}
 function renderLineup(){const l=state.lineup,e=$("lineup");if(!l.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<h2>COMPOSITION ${esc(l.formation)} — ${esc(l.team==="A"?state.teamA:state.teamB)}</h2><div class="players-grid">${(l.players||[]).map((x,i)=>`<div class="player">${i+1}. ${esc(x)}</div>`).join("")}</div>`}
 function renderReplay(){const r=state.replay,e=$("replay"),v=$("replayVideo");if(!r.active||!r.url){e.classList.add("hidden");return}e.classList.remove("hidden");if(v.src!==r.url)v.src=r.url;v.playbackRate=r.speed||1}
@@ -346,7 +355,51 @@ $("slowReplay").onclick=()=>save({replay:{active:true,url:$("replayUrl").value,s
 $("removeReplay").onclick=()=>save({replay:{active:false}});
 $("publishSub").onclick=()=>save({substitution:{active:true,outName:$("outName").value,outNumber:$("outNumber").value,inName:$("inName").value,inNumber:$("inNumber").value,duration:Number($("subDuration").value||10)}});
 $("removeSub").onclick=()=>save({substitution:{active:false}});
-$("publishGoal").onclick=()=>save({goals:[...(state.goals||[]),{player:$("goalPlayer").value,minute:$("goalMinute").value}]});
+$("publishGoal").onclick=async()=>{
+  const team=$("goalTeam").value;
+  const player=$("goalPlayer").value.trim();
+  const minute=$("goalMinute").value.trim();
+
+  const oldA=Number(state.scoreA||0);
+  const oldB=Number(state.scoreB||0);
+
+  const newA=team==="A" ? oldA+1 : oldA;
+  const newB=team==="B" ? oldB+1 : oldB;
+
+  const colors={
+    bar:$("goalBarColor").value,
+    stripe:$("goalStripeColor").value,
+    text:$("goalTextColor").value,
+    background:$("goalBackgroundColor").value,
+    clock:$("goalClockColor").value,
+    score:$("goalScoreColor").value,
+    team:$("goalTeamColor").value,
+    icon:$("goalIconColor").value
+  };
+
+  await save({
+    scoreA:newA,
+    scoreB:newB,
+    goals:[
+      ...(state.goals||[]),
+      {player,minute,team}
+    ],
+    goalAnimation:{
+      id:Date.now(),
+      active:true,
+      team,
+      player,
+      minute,
+      oldScoreA:oldA,
+      oldScoreB:oldB,
+      newScoreA:newA,
+      newScoreB:newB,
+      startedAt:Date.now(),
+      duration:Number($("goalDuration").value||8),
+      colors
+    }
+  });
+};
 $("clearGoals").onclick=()=>save({goals:[]});
 $("publishLineup").onclick=()=>save({lineup:{active:true,formation:$("formation").value,team:$("lineupTeam").value,players:$("players").value.split(/\n/).map(x=>x.trim()).filter(Boolean).slice(0,11)}});
 $("removeLineup").onclick=()=>save({lineup:{active:false}});
