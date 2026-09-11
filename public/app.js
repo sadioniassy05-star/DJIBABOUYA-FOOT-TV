@@ -176,7 +176,6 @@ function goalAnimationTick(){
 
   if(!ga?.active || !ga.startedAt){
     e.classList.add("hidden");
-    renderedGoalAnimationId=0;
     updateGoalScoreDisplay(true);
     return;
   }
@@ -190,16 +189,20 @@ function goalAnimationTick(){
     return;
   }
 
-  const progress=Math.max(0,Math.min(1,elapsed/duration));
+  const progress=elapsed/duration;
 
-  const transitionEnd=0.25;
-  const goalEnd=0.68;
+  /*
+    La durée choisie contrôle toute l'animation :
+    0% → 25% : transition bandes
+    25% → 70% : GOAL
+    70% → 100% : nouveau score
+  */
 
   let stage="transition";
 
-  if(progress>=goalEnd){
+  if(progress>=0.70){
     stage="score";
-  }else if(progress>=transitionEnd){
+  }else if(progress>=0.25){
     stage="goal";
   }
 
@@ -207,11 +210,6 @@ function goalAnimationTick(){
 
   if(animation){
     animation.dataset.stage=stage;
-
-    animation.style.setProperty(
-      "--goal-progress",
-      progress
-    );
 
     const clock=animation.querySelector(".goal-clock");
 
@@ -564,6 +562,23 @@ $("publishGoal").onclick=async()=>{
       startedAt:Date.now(),
       duration:Number($("goalDuration").value||8),
       colors
+    }
+  });
+};
+$("cancelGoal").onclick=async()=>{
+  const ga=state?.goalAnimation;
+
+  if(!ga?.startedAt){
+    alert("Aucun but à annuler.");
+    return;
+  }
+
+  await save({
+    scoreA:Number(ga.oldScoreA||0),
+    scoreB:Number(ga.oldScoreB||0),
+    goalAnimation:{
+      active:false,
+      startedAt:0
     }
   });
 };
