@@ -141,15 +141,159 @@ $("scoreboard").style.background="transparent";
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 function renderAd(){const a=state.ad;const e=$("ad");if(!a.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.style.color=a.color;e.style.background=a.bg;e.innerHTML=(a.url?`<img src="${esc(a.url)}">`:"")+`<h2>${esc(a.title)}</h2><p>${esc(a.text)}</p>`}
 function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<div class="poster-inner" style="--pc:${p.color};${p.photo?`background-image:linear-gradient(#0f172acc,#0f172acc),url('${esc(p.photo)}');background-size:cover;background-position:center`:''}"><div class="comp">${esc(p.competition)}</div><div class="teams">${esc(p.team1)}<br>VS<br>${esc(p.team2)}</div><div>${esc(p.date)} ${esc(p.time)}</div><div>${esc(p.stadium)}</div></div>`}
+let renderedGoalAnimationId=0;
+let goalAnimationFrame=null;
+
 function renderGoal(){
-  const g=state.goals?.at(-1),e=$("goal");
-  if(!g){
+  const e=$("goal");
+  if(!e)return;
+  e.classList.add("hidden");
+}
+
+function updateGoalScoreDisplay(showNew){
+  if(!state)return;
+
+  const ga=state.goalAnimation;
+
+  let a=state.scoreA;
+  let b=state.scoreB;
+
+  if(ga?.active){
+    a=showNew ? Number(ga.newScoreA||0) : Number(ga.oldScoreA||0);
+    b=showNew ? Number(ga.newScoreB||0) : Number(ga.oldScoreB||0);
+  }
+
+  $("scoreA").textContent=a;
+  $("scoreB").textContent=b;
+}
+
+function renderGoalAnimation(){
+  const e=$("goal");
+  if(!e)return;
+
+  const ga=state?.goalAnimation;
+
+  if(!ga?.active || !ga.startedAt){
     e.classList.add("hidden");
+
+    if(goalAnimationFrame){
+      cancelAnimationFrame(goalAnimationFrame);
+      goalAnimationFrame=null;
+    }
+
+    renderedGoalAnimationId=0;
+    updateGoalScoreDisplay(true);
     return;
   }
 
-  e.classList.remove("hidden");
-  e.innerHTML=`⚽ BUT — ${esc(g.player)} <span>${esc(g.minute)}'</span>`;
+  const duration=Math.max(2,Number(ga.duration||4));
+  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+
+  if(elapsed>=duration){
+    e.classList.add("hidden");
+    updateGoalScoreDisplay(true);
+
+    if(goalAnimationFrame){
+      cancelAnimationFrame(goalAnimationFrame);
+      goalAnimationFrame=null;
+    }
+
+    return;
+  }
+
+  if(renderedGoalAnimationId!==ga.id){
+
+    renderedGoalAnimationId=ga.id;
+
+    const c=ga.colors||{};
+
+    e.innerHTML=`
+      <div class="goal-animation"
+        style="
+          --goal-bar:${esc(c.bar||"#1236d6")};
+          --goal-stripe:${esc(c.stripe||"#ffffff")};
+          --goal-text:${esc(c.text||"#ffffff")};
+          --goal-bg:${esc(c.background||"#1236d6")};
+          --goal-clock:${esc(c.clock||"#ffffff")};
+          --goal-score:${esc(c.score||"#ffffff")};
+          --goal-team:${esc(c.team||"#ffffff")};
+          --goal-icon:${esc(c.icon||"#ffffff")};
+        ">
+
+        <div class="goal-stripes"></div>
+
+        <div class="goal-content">
+          <div class="goal-icon">⚽</div>
+
+          <div class="goal-word">GOAL</div>
+
+          <div class="goal-scorer">
+            ${esc(ga.player||"BUT")}
+            ${ga.minute!=="" ? `<span>${esc(ga.minute)}'</span>` : ""}
+          </div>
+        </div>
+
+        <div class="goal-final-score">
+
+          <div class="goal-team goal-team-a">
+            ${esc(state.teamA)}
+          </div>
+
+          <div class="goal-score-number">
+            <span class="goal-score-a">${Number(ga.newScoreA||0)}</span>
+            <b>–</b>
+            <span class="goal-score-b">${Number(ga.newScoreB||0)}</span>
+          </div>
+
+          <div class="goal-team goal-team-b">
+            ${esc(state.teamB)}
+          </div>
+
+          <div class="goal-clock">
+            ${fmt(currentClock())}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    e.classList.remove("hidden");
+  }
+
+  const progress=Math.max(0,Math.min(1,elapsed/duration));
+
+  const transitionEnd=0.25;
+  const goalEnd=0.68;
+
+  let stage="transition";
+
+  if(progress>=goalEnd){
+    stage="score";
+  }else if(progress>=transitionEnd){
+    stage="goal";
+  }
+
+  const animation=e.querySelector(".goal-animation");
+
+  if(animation){
+    animation.dataset.stage=stage;
+
+    animation.style.setProperty(
+      "--goal-progress",
+      progress
+    );
+
+    const clock=animation.querySelector(".goal-clock");
+
+    if(clock){
+      clock.textContent=fmt(currentClock());
+    }
+  }
+
+  updateGoalScoreDisplay(stage==="score");
+
+  goalAnimationFrame=requestAnimationFrame(renderGoalAnimation);
 }
 function renderSub(){const s=state.substitution,e=$("substitution");if(!s.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`⬅ ${esc(s.outName)} (#${esc(s.outNumber)})<br>➡ ${esc(s.inName)} (#${esc(s.inNumber)})`}
 function renderLineup(){const l=state.lineup,e=$("lineup");if(!l.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<h2>COMPOSITION ${esc(l.formation)} — ${esc(l.team==="A"?state.teamA:state.teamB)}</h2><div class="players-grid">${(l.players||[]).map((x,i)=>`<div class="player">${i+1}. ${esc(x)}</div>`).join("")}</div>`}
