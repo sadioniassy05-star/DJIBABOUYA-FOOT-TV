@@ -136,7 +136,7 @@ $("scoreboard").style.background="transparent";
    if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
    else{f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML="";v.classList.remove("hidden");if(v.src!==state.directUrl){v.src=state.directUrl;v.play().catch(()=>{})}}
  }else{twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;v.classList.add("hidden");f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML=""}
- renderAd();renderPoster();renderGoal();renderSub();renderLineup();renderReplay();$("message").textContent=state.message&&(!state.addedTimeMessageStartedAt||Date.now()-state.addedTimeMessageStartedAt<Number(state.addedTimeMessageDuration||0)*1000)?state.message:"";$("message").classList.toggle("hidden",!$("message").textContent);
+  renderAd();renderPoster();renderGoal();renderGoalAnimation();renderSub();renderLineup();renderReplay();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 function renderAd(){const a=state.ad;const e=$("ad");if(!a.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.style.color=a.color;e.style.background=a.bg;e.innerHTML=(a.url?`<img src="${esc(a.url)}">`:"")+`<h2>${esc(a.title)}</h2><p>${esc(a.text)}</p>`}
