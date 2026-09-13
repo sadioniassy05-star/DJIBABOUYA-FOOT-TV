@@ -288,9 +288,27 @@ function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.class
 let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
+let goalVoiceSpokenId=0;
+let goalVoiceUnlocked=false;
+
+function unlockGoalVoice(){
+  if(goalVoiceUnlocked)return;
+  if(!("speechSynthesis" in window))return;
+
+  goalVoiceUnlocked=true;
+
+  const test=new SpeechSynthesisUtterance("");
+  test.volume=0;
+
+  window.speechSynthesis.speak(test);
+  window.speechSynthesis.cancel();
+}
+
+document.addEventListener("click",unlockGoalVoice,{once:true});
 
 function speakGoalAnnouncement(ga){
-  if(!ga || !ga.active || !ga.voice)return;
+function speakGoalAnnouncement(ga){
+  if(!ga || !ga.active || !ga.voice || !goalVoiceUnlocked)return;
   if(!("speechSynthesis" in window))return;
   if(!ga.id)return;
   if(goalVoiceSpokenId===ga.id)return;
