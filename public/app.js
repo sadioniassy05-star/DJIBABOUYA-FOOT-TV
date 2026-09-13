@@ -661,18 +661,27 @@ $("publishAdded").onclick=async()=>{
   const h=Number($("addedTimeHalf").value||1);
   const normalClock=currentClock();
 
+  const messageDuration=Number(
+    $("addedTimeMessageDuration").value||5
+  );
+
+  const messageStartedAt=Date.now();
+
   await save({
     addedTime:m,
     addedTimeHalf:h,
     addedTimeNormalClock:normalClock,
-    addedTimeActive:false,
-    addedTimeStartedAt:null,
+
+    addedTimeActive:true,
+    addedTimeStartedAt:messageStartedAt+(messageDuration*1000),
     addedTimePausedAt:null,
     addedTimeElapsed:0,
     addedTimeOverLimit:false,
     addedTimeFinished:false,
-    addedTimeMessageStartedAt:Date.now(),
-    addedTimeMessageDuration:Number($("addedTimeMessageDuration").value||5),
+
+    addedTimeMessageStartedAt:messageStartedAt,
+    addedTimeMessageDuration:messageDuration,
+
     message:m>0
       ?`TEMPS ADDITIONNEL — ${h===1?"PREMIÈRE MI-TEMPS":"DEUXIÈME MI-TEMPS"} +${m}`
       :""
