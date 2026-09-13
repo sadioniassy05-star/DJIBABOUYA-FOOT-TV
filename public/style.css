@@ -24,7 +24,7 @@
   border-radius:0;
   background:transparent;
   box-shadow:none;
-  z-index:20;
+  z-index:60;
   pointer-events:none;
   overflow:hidden;
 }
