@@ -288,7 +288,6 @@ function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.class
 let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
-let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
 
 function unlockGoalVoice(){
@@ -306,7 +305,7 @@ function unlockGoalVoice(){
 
 document.addEventListener("click",unlockGoalVoice,{once:true});
 
-function speakGoalAnnouncement(ga){
+
 function speakGoalAnnouncement(ga){
   if(!ga || !ga.active || !ga.voice || !goalVoiceUnlocked)return;
   if(!("speechSynthesis" in window))return;
