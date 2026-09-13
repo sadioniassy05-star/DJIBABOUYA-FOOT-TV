@@ -139,7 +139,151 @@ $("scoreboard").style.background="transparent";
   renderAd();renderPoster();renderGoal();renderGoalAnimation();renderSub();renderLineup();renderReplay();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
-function renderAd(){const a=state.ad;const e=$("ad");if(!a.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.style.color=a.color;e.style.background=a.bg;e.innerHTML=(a.url?`<img src="${esc(a.url)}">`:"")+`<h2>${esc(a.title)}</h2><p>${esc(a.text)}</p>`}
+let adAnimationTimer=null;
+let renderedAdKey="";
+
+function renderAd(){
+  const a=state?.ad;
+  const e=$("ad");
+
+  if(!e || !a){
+    return;
+  }
+
+  /* PUBLICITÉ RETIRÉE */
+  if(!a.active){
+
+    e.classList.add("hidden");
+    e.innerHTML="";
+
+    if(adAnimationTimer){
+      clearTimeout(adAnimationTimer);
+      adAnimationTimer=null;
+    }
+
+    renderedAdKey="";
+
+    return;
+  }
+
+  /*
+   * Identifie la publicité actuelle.
+   * Cela évite que le refresh() toutes les 1,5 secondes
+   * redémarre l'animation.
+   */
+  const adKey=JSON.stringify({
+    title:a.title||"",
+    text:a.text||"",
+    url:a.url||"",
+    duration:a.duration||10,
+    color:a.color||"#ffffff",
+    bg:a.bg||"#111827"
+  });
+
+  /* Si c'est exactement la même publicité,
+     on laisse l'animation continuer. */
+  if(renderedAdKey===adKey){
+    return;
+  }
+
+  renderedAdKey=adKey;
+
+  if(adAnimationTimer){
+    clearTimeout(adAnimationTimer);
+    adAnimationTimer=null;
+  }
+
+  e.classList.remove("hidden");
+
+  const duration=Math.max(
+    1,
+    Number(a.duration||10)
+  );
+
+  e.innerHTML=`
+    <div class="ad-moving-banner">
+
+      <div
+        class="ad-moving-content"
+        style="
+          color:${esc(a.color||"#ffffff")};
+          background:${esc(a.bg||"#111827")};
+        "
+      >
+
+        ${
+          a.url
+          ? `
+            <img
+              class="ad-moving-logo"
+              src="${esc(a.url)}"
+              alt=""
+            >
+          `
+          : ""
+        }
+
+        <div class="ad-moving-text">
+
+          <strong>
+            ${esc(a.title||"PUBLICITÉ")}
+          </strong>
+
+          ${
+            a.text
+            ? `
+              <span>
+                ${esc(a.text)}
+              </span>
+            `
+            : ""
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  const banner=e.querySelector(".ad-moving-banner");
+
+  if(!banner){
+    return;
+  }
+
+  /* Durée choisie dans ADMIN */
+  banner.style.setProperty(
+    "--ad-duration",
+    `${duration}s`
+  );
+
+  /*
+   * Force le navigateur à repartir
+   * du début de l'animation.
+   */
+  banner.classList.remove("ad-running");
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      banner.classList.add("ad-running");
+    });
+  });
+
+  /*
+   * Une fois la traversée terminée,
+   * on retire la publicité.
+   */
+  adAnimationTimer=setTimeout(()=>{
+
+    if(state?.ad?.active){
+
+      e.classList.add("hidden");
+
+    }
+
+  },duration*1000);
+}
 function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<div class="poster-inner" style="--pc:${p.color};${p.photo?`background-image:linear-gradient(#0f172acc,#0f172acc),url('${esc(p.photo)}');background-size:cover;background-position:center`:''}"><div class="comp">${esc(p.competition)}</div><div class="teams">${esc(p.team1)}<br>VS<br>${esc(p.team2)}</div><div>${esc(p.date)} ${esc(p.time)}</div><div>${esc(p.stadium)}</div></div>`}
 let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
