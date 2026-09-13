@@ -136,7 +136,7 @@ $("scoreboard").style.background="transparent";
    if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
    else{f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML="";v.classList.remove("hidden");if(v.src!==state.directUrl){v.src=state.directUrl;v.play().catch(()=>{})}}
  }else{twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;v.classList.add("hidden");f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML=""}
-  renderAd();renderPoster();renderGoal();renderGoalAnimation();renderSub();renderLineup();renderReplay();
+  renderAd();renderPoster();renderGoalAnimation();renderSub();renderLineup();renderReplay();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 let adAnimationTimer=null;
@@ -469,8 +469,11 @@ const elapsed=(Date.now()-goalLocalStartAt)/1000;
       goalAnimationFrame=null;
     }
 
+    goalLocalStartId=0;
+    goalLocalStartAt=0;
+
     return;
-  }
+}
 
   if(renderedGoalAnimationId!==ga.id){
     renderedGoalAnimationId=ga.id;
