@@ -289,6 +289,9 @@ let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
+const goalLocalStartTimes=new Map();
+/* Heure locale de réception de chaque animation GOAL */
+const goalLocalStartTimes=new Map();
 
 function unlockGoalVoice(){
   if(goalVoiceUnlocked)return;
@@ -381,8 +384,13 @@ function goalAnimationTick(){
   }
 
   const duration=Math.max(2,Number(ga.duration||4));
-  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
 
+if(!goalLocalStartTimes.has(ga.id)){
+  goalLocalStartTimes.set(ga.id,Date.now());
+}
+
+const elapsed=
+  (Date.now()-goalLocalStartTimes.get(ga.id))/1000;
   if(elapsed>=duration){
     e.classList.add("hidden");
     updateGoalScoreDisplay(true);
@@ -444,7 +452,11 @@ function renderGoalAnimation(){
 
   if(renderedGoalAnimationId!==ga.id){
 
-    renderedGoalAnimationId=ga.id;
+  renderedGoalAnimationId=ga.id;
+
+  /* Le spectateur commence l'animation
+     dès qu'il reçoit le nouveau but */
+  goalLocalStartTimes.set(ga.id,Date.now());
 
     const c=ga.colors||{};
 
