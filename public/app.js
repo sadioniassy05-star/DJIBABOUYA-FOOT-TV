@@ -341,13 +341,29 @@ function renderGoal(){
   if(!e)return;
 
   const ga=state?.goalAnimation;
+    if(ga?.active && ga.startedAt){
+    const duration=Math.max(2,Number(ga.duration||4));
+    const elapsed=(Date.now()-Number(ga.startedAt))/1000;
 
-  if(ga?.active && ga.startedAt){
-    e.classList.remove("hidden");
+    if(elapsed>=duration){
+      e.classList.add("hidden");
+      return;
+    }
+  }
+  if(!ga?.active || !ga.startedAt){
+    e.classList.add("hidden");
     return;
   }
 
-  e.classList.add("hidden");
+  const duration=Math.max(2,Number(ga.duration||4));
+  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+
+  if(elapsed>=duration){
+    e.classList.add("hidden");
+    return;
+  }
+
+  e.classList.remove("hidden");
 }
 
 function updateGoalScoreDisplay(showNew){
