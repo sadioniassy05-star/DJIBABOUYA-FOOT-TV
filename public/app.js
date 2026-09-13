@@ -289,9 +289,6 @@ let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
-const
-/* Heure locale de réception de chaque animation GOAL */
-const
 
 function unlockGoalVoice(){
   if(goalVoiceUnlocked)return;
