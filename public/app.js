@@ -384,11 +384,15 @@ function goalAnimationTick(){
 
   const ga=state?.goalAnimation;
   speakGoalAnnouncement(ga);
-  if(!ga?.active || !ga.startedAt){
-    e.classList.add("hidden");
-    updateGoalScoreDisplay(true);
-    return;
-  }
+  if(!ga?.active || !ga.id){
+  e.classList.add("hidden");
+
+  goalLocalStartId=0;
+  goalLocalStartAt=0;
+
+  updateGoalScoreDisplay(true);
+  return;
+}
    const duration=Math.max(2,Number(ga.duration||4));
    if(goalLocalStartId!==ga.id){
   goalLocalStartId=ga.id;
@@ -438,7 +442,7 @@ function renderGoalAnimation(){
 
   const ga=state?.goalAnimation;
 
-  if(!ga?.active || !ga.startedAt){
+  if(!ga?.active || !ga.id){
     e.classList.add("hidden");
 
     if(goalAnimationFrame){
@@ -468,9 +472,7 @@ const elapsed=(Date.now()-goalLocalStartAt)/1000;
       cancelAnimationFrame(goalAnimationFrame);
       goalAnimationFrame=null;
     }
-
-    goalLocalStartId=0;
-    goalLocalStartAt=0;
+    updateGoalScoreDisplay(true);
 
     return;
 }
@@ -784,7 +786,7 @@ $("publishGoal").onclick=async()=>{
     team:$("goalTeamColor").value,
     icon:$("goalIconColor").value
   };
-
+  const goalId=Date.now();
   await save({
     scoreA:newA,
     scoreB:newB,
@@ -821,7 +823,7 @@ $("publishGoal").onclick=async()=>{
 $("cancelGoal").onclick=async()=>{
   const ga=state?.goalAnimation;
 
-  if(!ga?.startedAt){
+  if(!ga?.id){
     alert("Aucun but à annuler.");
     return;
   }
@@ -830,9 +832,10 @@ $("cancelGoal").onclick=async()=>{
     scoreA:Number(ga.oldScoreA||0),
     scoreB:Number(ga.oldScoreB||0),
     goalAnimation:{
-      active:false,
-      startedAt:0
-    }
+  active:false,
+  id:0,
+  startedAt:0
+}
   });
 };
 $("clearGoals").onclick=()=>save({goals:[]});
