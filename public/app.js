@@ -756,6 +756,35 @@ $("publishAdded").onclick=async()=>{
       :""
   });
 };
+$("publishEntertainment").onclick=async()=>{
+  const type=$("entertainmentType").value;
+  const url=$("entertainmentUrl").value.trim();
+  const duration=Number($("entertainmentDuration").value||0);
+  const loop=$("entertainmentLoop").value;
+
+  if(!url){
+    alert("Veuillez entrer l'URL de la vidéo ou de la photo.");
+    return;
+  }
+
+  await save({
+    entertainment:{
+      active:true,
+      type,
+      url,
+      duration,
+      loop,
+      startedAt:Date.now()
+    }
+  });
+};
+$("removeEntertainment").onclick=async()=>{
+  await save({
+    entertainment:{
+      active:false
+    }
+  });
+};
 $("startAddedTime").onclick=()=>{
   if(!state?.addedTime)return;
 
