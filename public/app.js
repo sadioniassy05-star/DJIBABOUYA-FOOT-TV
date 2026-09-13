@@ -115,6 +115,30 @@ if(state.addedTimeActive && state.addedTimeStartedAt){
 }else{
   addedClock.classList.add("hidden");
 }
+  const messageBox=$("message");
+
+if(messageBox){
+  const messageStart=Number(state.addedTimeMessageStartedAt||0);
+  const messageDuration=Number(state.addedTimeMessageDuration||5)*1000;
+
+  const isAddedTimeMessage=
+    String(state.message||"").startsWith("TEMPS ADDITIONNEL — ");
+
+  if(
+    state.message &&
+    (
+      !isAddedTimeMessage ||
+      !messageStart ||
+      Date.now() < messageStart+messageDuration
+    )
+  ){
+    messageBox.textContent=state.message;
+    messageBox.classList.remove("hidden");
+  }else{
+    messageBox.textContent="";
+    messageBox.classList.add("hidden");
+  }
+}
  $("scoreboard").style.display=state.display.visible?"grid":"none";
 $("scoreboard").style.left=`${state.display.x??50}%`;
 $("scoreboard").style.top=`${state.display.y??9}%`;
