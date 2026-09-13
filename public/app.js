@@ -287,7 +287,38 @@ function renderAd(){
 function renderPoster(){const p=state.poster,e=$("poster");if(!p.active){e.classList.add("hidden");return}e.classList.remove("hidden");e.innerHTML=`<div class="poster-inner" style="--pc:${p.color};${p.photo?`background-image:linear-gradient(#0f172acc,#0f172acc),url('${esc(p.photo)}');background-size:cover;background-position:center`:''}"><div class="comp">${esc(p.competition)}</div><div class="teams">${esc(p.team1)}<br>VS<br>${esc(p.team2)}</div><div>${esc(p.date)} ${esc(p.time)}</div><div>${esc(p.stadium)}</div></div>`}
 let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
+let goalVoiceSpokenId=0;
 
+function speakGoalAnnouncement(ga){
+  if(!ga || !ga.active || !ga.voice)return;
+  if(!("speechSynthesis" in window))return;
+  if(!ga.id)return;
+  if(goalVoiceSpokenId===ga.id)return;
+
+  goalVoiceSpokenId=ga.id;
+
+  const teamName=ga.teamName ||
+    (ga.team==="A" ? state?.teamA : state?.teamB) ||
+    "l'équipe";
+
+  const player=ga.player || "un joueur";
+  const number=ga.number ? `, numéro ${ga.number}` : "";
+  const minute=ga.minute!=="" ? `, à la ${ga.minute}e minute` : "";
+
+  const message=
+    `But pour ${teamName} ! But marqué par ${player}${number}${minute} !`;
+
+  window.speechSynthesis.cancel();
+
+  const utterance=new SpeechSynthesisUtterance(message);
+
+  utterance.lang="fr-FR";
+  utterance.rate=0.9;
+  utterance.pitch=1;
+  utterance.volume=1;
+
+  window.speechSynthesis.speak(utterance);
+}
 function renderGoal(){
   const e=$("goal");
   if(!e)return;
