@@ -289,7 +289,7 @@ let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
-const goalLocalStartTimes=new Map();
+const
 /* Heure locale de réception de chaque animation GOAL */
 const
 
@@ -382,19 +382,9 @@ function goalAnimationTick(){
     updateGoalScoreDisplay(true);
     return;
   }
-
-  const duration=Math.max(2,Number(ga.duration||4));
-
-if(!goalLocalStartTimes.has(ga.id)){
-  goalLocalStartTimes.set(ga.id,Date.now());
-}
-
-const elapsed=
-  (Date.now()-goalLocalStartTimes.get(ga.id))/1000;
-  if(elapsed>=duration){
-    e.classList.add("hidden");
-    updateGoalScoreDisplay(true);
-    return;
+   const duration=Math.max(2,Number(ga.duration||4));
+const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+  
   }
 
   const progress=elapsed/duration;
@@ -456,7 +446,7 @@ function renderGoalAnimation(){
 
   /* Le spectateur commence l'animation
      dès qu'il reçoit le nouveau but */
-  goalLocalStartTimes.set(ga.id,Date.now());
+  
 
     const c=ga.colors||{};
 
