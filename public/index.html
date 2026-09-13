@@ -174,6 +174,54 @@
   <h2>🟣 TWITCH — BANIALFATY</h2>
   <p class="hint">Le direct BANIALFATY est automatique. Aucun bouton de publication ou de retrait n’est nécessaire.</p>
 </section>
+        <section class="card">
+  <h2>🎬 VIDÉO / PHOTO TV</h2>
+
+  <p class="hint">
+    Diffusion plein écran avant-match, après-match ou hors direct.
+  </p>
+
+  <select id="entertainmentType">
+    <option value="video">🎬 VIDÉO AVEC SON</option>
+    <option value="image">🖼️ PHOTO</option>
+  </select>
+
+  <input
+    id="entertainmentUrl"
+    type="url"
+    placeholder="URL de la vidéo ou de la photo"
+  >
+
+  <div class="row">
+    <input
+      id="entertainmentDuration"
+      type="number"
+      min="0"
+      max="3600"
+      value="0"
+      placeholder="Durée (secondes)"
+    >
+
+    <select id="entertainmentLoop">
+      <option value="off">▶️ UNE SEULE FOIS</option>
+      <option value="on">🔁 EN BOUCLE</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <button id="publishEntertainment">
+      ▶️ PUBLIER SUR LA TV
+    </button>
+
+    <button id="removeEntertainment">
+      ⏹️ RETIRER
+    </button>
+  </div>
+
+  <p class="hint">
+    Le contenu disparaît automatiquement lorsque le direct commence.
+  </p>
+</section>
 
         <section class="card"><h2>📺 DIRECT</h2>
           <input id="directUrl" placeholder="URL HLS/MP4 ou URL de lecture Cloudflare Stream">
