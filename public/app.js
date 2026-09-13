@@ -356,7 +356,7 @@ function goalAnimationTick(){
   if(!e)return;
 
   const ga=state?.goalAnimation;
-
+  speakGoalAnnouncement(ga);
   if(!ga?.active || !ga.startedAt){
     e.classList.add("hidden");
     updateGoalScoreDisplay(true);
