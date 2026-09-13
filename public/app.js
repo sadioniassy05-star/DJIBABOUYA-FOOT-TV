@@ -291,7 +291,7 @@ let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
 const goalLocalStartTimes=new Map();
 /* Heure locale de réception de chaque animation GOAL */
-const goalLocalStartTimes=new Map();
+const
 
 function unlockGoalVoice(){
   if(goalVoiceUnlocked)return;
