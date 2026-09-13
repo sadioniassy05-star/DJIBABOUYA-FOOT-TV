@@ -460,7 +460,7 @@ function renderGoalAnimation(){
 
 if(goalLocalStartId!==ga.id){
   goalLocalStartId=ga.id;
-  goalLocalStartAt=Date.now();
+  goalLocalStartAt=Number(ga.startedAt||0);
 }
 
 const elapsed=(Date.now()-goalLocalStartAt)/1000;
