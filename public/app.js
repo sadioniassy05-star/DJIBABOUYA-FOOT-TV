@@ -802,7 +802,7 @@ $("publishGoal").onclick=async()=>{
     ],
 
     goalAnimation:{
-      id:Date.now(),
+      id:goalId,
       active:true,
       team,
       teamName:team==="A" ? state.teamA : state.teamB,
@@ -814,7 +814,7 @@ $("publishGoal").onclick=async()=>{
       oldScoreB:oldB,
       newScoreA:newA,
       newScoreB:newB,
-      startedAt:Date.now(),
+      startedAt:goalId,
       duration:Number($("goalDuration").value||4),
       colors
     }
