@@ -289,6 +289,8 @@ let renderedGoalAnimationId=0;
 let goalAnimationFrame=null;
 let goalVoiceSpokenId=0;
 let goalVoiceUnlocked=false;
+let goalLocalStartId=0;
+let goalLocalStartAt=0;
 
 function unlockGoalVoice(){
   if(goalVoiceUnlocked)return;
@@ -348,7 +350,7 @@ function renderGoal(){
   }
 
   const duration=Math.max(2,Number(ga.duration||4));
-  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+const elapsed=(Date.now()-Number(ga.startedAt))/1000;
 
   if(elapsed>=duration){
     e.classList.add("hidden");
@@ -388,7 +390,11 @@ function goalAnimationTick(){
     return;
   }
    const duration=Math.max(2,Number(ga.duration||4));
-const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+   if(goalLocalStartId!==ga.id){
+  goalLocalStartId=ga.id;
+  goalLocalStartAt=Date.now();
+}
+const elapsed=(Date.now()-goalLocalStartAt)/1000;
   
   
 
@@ -439,14 +445,21 @@ function renderGoalAnimation(){
       cancelAnimationFrame(goalAnimationFrame);
       goalAnimationFrame=null;
     }
-
+    goalLocalStartId=0;
+    goalLocalStartAt=0;
     renderedGoalAnimationId=0;
     updateGoalScoreDisplay(true);
     return;
   }
 
   const duration=Math.max(2,Number(ga.duration||4));
-  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+
+if(goalLocalStartId!==ga.id){
+  goalLocalStartId=ga.id;
+  goalLocalStartAt=Date.now();
+}
+
+const elapsed=(Date.now()-goalLocalStartAt)/1000;
 
   if(elapsed>=duration){
     e.classList.add("hidden");
