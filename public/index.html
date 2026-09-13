@@ -211,10 +211,19 @@
     <option value="B">ÉQUIPE B — BUT</option>
   </select>
 
-  <div class="row">
-    <input id="goalPlayer" placeholder="Nom du joueur">
-    <input id="goalMinute" placeholder="Minute">
-  </div>
+ <div class="row">
+  <input id="goalPlayer" placeholder="Nom du joueur">
+  <input id="goalNumber" type="number" min="1" max="99" placeholder="N°">
+  <input id="goalMinute" placeholder="Minute">
+</div>
+
+<label>
+  🔊 Annonce vocale
+  <select id="goalVoice">
+    <option value="on">ACTIVÉE</option>
+    <option value="off">DÉSACTIVÉE</option>
+  </select>
+</label>
 
   <label>
     Durée de l'animation
