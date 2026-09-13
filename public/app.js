@@ -96,12 +96,21 @@ function render(){
 $("clock").textContent=fmt(currentClock());
   const addedClock=$("addedClock");
 
-if(state.addedTimeActive || state.addedTimeElapsed>0){
-  const elapsed=state.addedTimeActive
-    ? Number(state.addedTimeElapsed||0)+Math.floor((Date.now()-(state.addedTimeStartedAt||Date.now()))/1000)
-    : Number(state.addedTimeElapsed||0);
+if(state.addedTimeActive && state.addedTimeStartedAt){
+  const elapsed=Math.min(
+    Number(state.addedTimeElapsed||0)+
+    Math.max(0,Math.floor((Date.now()-state.addedTimeStartedAt)/1000)),
+    Number(state.addedTime||0)*60
+  );
 
-  addedClock.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
+  if(Date.now()>=state.addedTimeStartedAt){
+    addedClock.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
+    addedClock.classList.remove("hidden");
+  }else{
+    addedClock.classList.add("hidden");
+  }
+}else if(state.addedTimeElapsed>0){
+  addedClock.textContent=`+${state.addedTime||0} ${fmt(state.addedTimeElapsed)}`;
   addedClock.classList.remove("hidden");
 }else{
   addedClock.classList.add("hidden");
@@ -649,15 +658,18 @@ $("startAddedTime").onclick=()=>{
   if(!state?.addedTime)return;
 
   const limit=Number(state.addedTime)*60;
+const wait=Number(state.addedTimeMessageDuration||5)*1000;
+const startAt=Date.now()+wait;
 
-  save({
-    addedTimeActive:true,
-    addedTimeStartedAt:Date.now(),
-    addedTimePausedAt:null,
-    addedTimeElapsed:0,
-    addedTimeOverLimit:false,
-    addedTimeFinished:false
-  });
+save({
+  addedTimeActive:true,
+  addedTimeStartedAt:startAt,
+  addedTimePausedAt:null,
+  addedTimeElapsed:0,
+  addedTimeOverLimit:false,
+  addedTimeFinished:false
+});
+  
 };
 $("pauseAddedTime").onclick=()=>{
   if(!state?.addedTimeActive||!state?.addedTimeStartedAt)return;
@@ -881,11 +893,11 @@ setInterval(()=>{
 
   if(state.addedTimeActive && state.addedTimeStartedAt){
     const elapsed=Math.min(
-      Number(state.addedTimeElapsed||0)+
-      Math.floor((Date.now()-state.addedTimeStartedAt)/1000),
-      Number(state.addedTime||0)*60
-    );
-
+  Number(state.addedTimeElapsed||0)+
+  Math.max(0,Math.floor((Date.now()-state.addedTimeStartedAt)/1000)),
+  Number(state.addedTime||0)*60
+);
+  
     e.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
     e.classList.remove("hidden");
   }
