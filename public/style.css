@@ -608,3 +608,96 @@
     gap:10px 10px;
   }
 }
+/* =========================================================
+   PUBLICITÉ TRAVERSANTE — DROITE → GAUCHE
+   ========================================================= */
+
+#ad{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:7%;
+  width:100%;
+  height:90px;
+  min-width:0;
+  max-width:none;
+  padding:0;
+  margin:0;
+  transform:none;
+  border-radius:0;
+  box-shadow:none;
+  overflow:hidden;
+  z-index:50;
+  pointer-events:none;
+  text-align:left;
+}
+
+.ad-moving-banner{
+  position:absolute;
+  top:0;
+  left:0;
+  width:max-content;
+  min-width:100%;
+  height:90px;
+  transform:translateX(100vw);
+  will-change:transform;
+}
+
+.ad-moving-banner.ad-running{
+  animation:adRightToLeft var(--ad-duration,10s) linear forwards;
+}
+
+.ad-moving-content{
+  height:90px;
+  min-width:100%;
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:0 35px;
+  box-sizing:border-box;
+
+  white-space:nowrap;
+
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  font-weight:900;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.45);
+}
+
+.ad-moving-logo{
+  width:62px;
+  height:62px;
+  object-fit:contain;
+  flex:none;
+}
+
+.ad-moving-text{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  font-size:clamp(22px,3vw,38px);
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.ad-moving-text strong{
+  font-weight:1000;
+}
+
+.ad-moving-text span{
+  font-weight:700;
+}
+
+/* Mouvement complet : entre par la droite,
+   traverse tout l'écran et sort complètement à gauche */
+
+@keyframes adRightToLeft{
+  0%{
+    transform:translateX(100vw);
+  }
+
+  100%{
+    transform:translateX(-100%);
+  }
+}
