@@ -515,7 +515,26 @@ $("closeAdmin").onclick=()=>$("adminPanel").classList.add("hidden");
 $("loginBtn").onclick=async()=>{const x=await api("/api/login",{method:"POST",body:JSON.stringify({password:$("password").value})});if(x.ok){logged=true;$("loginBox").classList.add("hidden");$("controls").classList.remove("hidden");setupInputs()}else $("loginError").textContent=x.error||"Échec"};
 $("password").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
 $("logoutBtn").onclick=async()=>{await fetch("/api/logout");logged=false;$("controls").classList.add("hidden");$("loginBox").classList.remove("hidden")};
-document.querySelectorAll("[data-score]").forEach(b=>b.onclick=async()=>{let k=b.dataset.score;let patch={};if(k==="a+")patch.scoreA=state.scoreA+1;if(k==="a-")patch.scoreA=Math.max(0,state.scoreA-1);if(k==="b+")patch.scoreB=state.scoreB+1;if(k==="b-")patch.scoreB=Math.max(0,state.scoreB-1);await save(patch)});
+document.querySelectorAll("[data-score]").forEach(b=>b.onclick=async()=>{
+  const k=b.dataset.score;
+
+  let scoreA=Number(state.scoreA||0);
+  let scoreB=Number(state.scoreB||0);
+
+  if(k==="a+") scoreA++;
+  if(k==="a-") scoreA=Math.max(0,scoreA-1);
+  if(k==="b+") scoreB++;
+  if(k==="b-") scoreB=Math.max(0,scoreB-1);
+
+  await save({
+    scoreA,
+    scoreB,
+    goalAnimation:{
+      active:false,
+      startedAt:0
+    }
+  });
+});
 $("updateMatch").onclick=()=>save({
   teamA:$("teamAInput").value||"ÉQUIPE A",
   teamB:$("teamBInput").value||"ÉQUIPE B",
