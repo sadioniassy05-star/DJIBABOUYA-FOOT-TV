@@ -169,12 +169,81 @@ $("scoreboard").style.background="transparent";
    if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
    else{f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML="";v.classList.remove("hidden");if(v.src!==state.directUrl){v.src=state.directUrl;v.play().catch(()=>{})}}
  }else{twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;v.classList.add("hidden");f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML=""}
-  renderAd();renderPoster();renderGoalAnimation();renderSub();renderLineup();renderReplay();
+  renderAd();renderPoster();renderGoalAnimation();renderSub();renderLineup();renderReplay();renderEntertainment();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 let adAnimationTimer=null;
 let renderedAdKey="";
+function renderEntertainment(){
+  const box=$("entertainment");
+  const video=$("entertainmentVideo");
+  const image=$("entertainmentImage");
+  const sound=$("entertainmentSound");
 
+  if(!box || !video || !image)return;
+
+  const media=state?.entertainment;
+
+  if(!media?.active || !media.url || state?.twitch?.active && twitchIsLive){
+    box.classList.add("hidden");
+    video.pause();
+    video.removeAttribute("src");
+    image.removeAttribute("src");
+    sound?.classList.add("hidden");
+    return;
+  }
+
+  box.classList.remove("hidden");
+
+  if(media.type==="image"){
+    video.pause();
+    video.classList.add("hidden");
+    image.classList.remove("hidden");
+
+    if(image.src!==media.url){
+      image.src=media.url;
+    }
+
+    sound?.classList.add("hidden");
+    return;
+  }
+
+  image.classList.add("hidden");
+  video.classList.remove("hidden");
+
+  if(video.src!==media.url){
+    video.src=media.url;
+    video.load();
+  }
+
+  video.loop=media.loop==="on";
+
+  const startedAt=Number(media.startedAt||0);
+  if(startedAt){
+    const elapsed=Math.max(0,(Date.now()-startedAt)/1000);
+
+    if(Math.abs(video.currentTime-elapsed)>2){
+      try{
+        video.currentTime=elapsed;
+      }catch(e){}
+    }
+  }
+
+  video.play().catch(()=>{
+    sound?.classList.remove("hidden");
+  });
+}
+$("entertainmentSound")?.addEventListener("click",()=>{
+  const video=$("entertainmentVideo");
+  if(!video)return;
+
+  video.muted=false;
+  video.volume=1;
+
+  video.play().then(()=>{
+    $("entertainmentSound")?.classList.add("hidden");
+  }).catch(()=>{});
+});
 function renderAd(){
   const a=state?.ad;
   const e=$("ad");
