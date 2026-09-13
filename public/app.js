@@ -382,7 +382,7 @@ function goalAnimationTick(){
    const duration=Math.max(2,Number(ga.duration||4));
 const elapsed=(Date.now()-Number(ga.startedAt))/1000;
   
-  }
+  
 
   const progress=elapsed/duration;
 
