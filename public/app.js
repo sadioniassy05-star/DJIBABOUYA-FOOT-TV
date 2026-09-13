@@ -416,14 +416,17 @@ function renderGoalAnimation(){
         <div class="goal-stripes"></div>
 
         <div class="goal-content">
+
           <div class="goal-icon">⚽</div>
 
           <div class="goal-word">GOAL</div>
 
           <div class="goal-scorer">
             ${esc(ga.player||"BUT")}
-            ${ga.minute!=="" ? `<span>${esc(ga.minute)}'</span>` : ""}
+            ${ga.number ? `<span class="goal-number">N° ${esc(ga.number)}</span>` : ""}
+            ${ga.minute!=="" ? `<span class="goal-minute">${esc(ga.minute)}'</span>` : ""}
           </div>
+
         </div>
 
         <div class="goal-final-score">
@@ -694,7 +697,9 @@ $("removeSub").onclick=()=>save({substitution:{active:false}});
 $("publishGoal").onclick=async()=>{
   const team=$("goalTeam").value;
   const player=$("goalPlayer").value.trim();
+  const number=String($("goalNumber").value||"").trim();
   const minute=$("goalMinute").value.trim();
+  const voice=$("goalVoice").value==="on";
 
   const oldA=Number(state.scoreA||0);
   const oldB=Number(state.scoreB||0);
@@ -716,22 +721,32 @@ $("publishGoal").onclick=async()=>{
   await save({
     scoreA:newA,
     scoreB:newB,
+
     goals:[
       ...(state.goals||[]),
-      {player,minute,team}
+      {
+        player,
+        number,
+        minute,
+        team
+      }
     ],
+
     goalAnimation:{
       id:Date.now(),
       active:true,
       team,
+      teamName:team==="A" ? state.teamA : state.teamB,
       player,
+      number,
       minute,
+      voice,
       oldScoreA:oldA,
       oldScoreB:oldB,
       newScoreA:newA,
       newScoreB:newB,
       startedAt:Date.now(),
-      duration:Number($("goalDuration").value||8),
+      duration:Number($("goalDuration").value||4),
       colors
     }
   });
