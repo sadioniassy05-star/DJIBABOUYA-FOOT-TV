@@ -341,15 +341,7 @@ function renderGoal(){
   if(!e)return;
 
   const ga=state?.goalAnimation;
-    if(ga?.active && ga.startedAt){
-    const duration=Math.max(2,Number(ga.duration||4));
-    const elapsed=(Date.now()-Number(ga.startedAt))/1000;
 
-    if(elapsed>=duration){
-      e.classList.add("hidden");
-      return;
-    }
-  }
   if(!ga?.active || !ga.startedAt){
     e.classList.add("hidden");
     return;
@@ -453,13 +445,22 @@ function renderGoalAnimation(){
     return;
   }
 
+  const duration=Math.max(2,Number(ga.duration||4));
+  const elapsed=(Date.now()-Number(ga.startedAt))/1000;
+
+  if(elapsed>=duration){
+    e.classList.add("hidden");
+
+    if(goalAnimationFrame){
+      cancelAnimationFrame(goalAnimationFrame);
+      goalAnimationFrame=null;
+    }
+
+    return;
+  }
+
   if(renderedGoalAnimationId!==ga.id){
-
-  renderedGoalAnimationId=ga.id;
-
-  /* Le spectateur commence l'animation
-     dès qu'il reçoit le nouveau but */
-  
+    renderedGoalAnimationId=ga.id;
 
     const c=ga.colors||{};
 
@@ -475,13 +476,10 @@ function renderGoalAnimation(){
           --goal-team:${esc(c.team||"#ffffff")};
           --goal-icon:${esc(c.icon||"#ffffff")};
         ">
-
         <div class="goal-stripes"></div>
 
         <div class="goal-content">
-
           <div class="goal-icon">⚽</div>
-
           <div class="goal-word">GOAL</div>
 
           <div class="goal-scorer">
@@ -489,14 +487,10 @@ function renderGoalAnimation(){
             ${ga.number ? `<span class="goal-number">N° ${esc(ga.number)}</span>` : ""}
             ${ga.minute!=="" ? `<span class="goal-minute">${esc(ga.minute)}'</span>` : ""}
           </div>
-
         </div>
 
         <div class="goal-final-score">
-
-          <div class="goal-team goal-team-a">
-            ${esc(state.teamA)}
-          </div>
+          <div class="goal-team goal-team-a">${esc(state.teamA)}</div>
 
           <div class="goal-score-number">
             <span class="goal-score-a">${Number(ga.newScoreA||0)}</span>
@@ -504,16 +498,10 @@ function renderGoalAnimation(){
             <span class="goal-score-b">${Number(ga.newScoreB||0)}</span>
           </div>
 
-          <div class="goal-team goal-team-b">
-            ${esc(state.teamB)}
-          </div>
+          <div class="goal-team goal-team-b">${esc(state.teamB)}</div>
 
-          <div class="goal-clock">
-            ${fmt(currentClock())}
-          </div>
-
+          <div class="goal-clock">${fmt(currentClock())}</div>
         </div>
-
       </div>
     `;
 
