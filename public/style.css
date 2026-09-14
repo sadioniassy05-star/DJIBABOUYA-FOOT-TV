@@ -988,6 +988,7 @@
   align-items:center;
   justify-content:center;
   overflow:hidden;
+  animation:tvPowerOffAnim 1.4s ease forwards;
 }
 
 .tv-power-glow{
@@ -1002,6 +1003,7 @@
     transparent 70%
   );
   filter:blur(18px);
+  animation:tvPowerGlowAnim 1.4s ease forwards;
 }
 
 .tv-power-logo{
@@ -1009,6 +1011,7 @@
   z-index:2;
   text-align:center;
   opacity:1;
+  animation:tvPowerLogoAnim 1.4s ease forwards;
 }
 
 .tv-power-logo-main{
@@ -1030,4 +1033,73 @@
   font-size:13px;
   letter-spacing:.35em;
   opacity:.65;
+  animation:tvPowerStandbyAnim 1.4s ease forwards;
 }
+@keyframes tvPowerOffAnim{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  70%{
+    opacity:1;
+    transform:scale(.96);
+  }
+
+  100%{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+@keyframes tvPowerGlowAnim{
+  0%{
+    opacity:0;
+    transform:scale(.2);
+  }
+
+  35%{
+    opacity:1;
+    transform:scale(1.15);
+  }
+
+  100%{
+    opacity:.25;
+    transform:scale(.75);
+  }
+}
+@keyframes tvPowerLogoAnim{
+  0%{
+    opacity:0;
+    transform:scale(.7);
+    filter:blur(12px);
+  }
+
+  45%{
+    opacity:1;
+    transform:scale(1.05);
+    filter:blur(0);
+  }
+
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+@keyframes tvPowerStandbyAnim{
+  0%{
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  55%{
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  100%{
+    opacity:.65;
+    transform:translateY(0);
+  }
+}
+
