@@ -184,7 +184,7 @@ function renderEntertainment(){
 
   const media=state?.entertainment;
 
-  if(!media?.active || !media.url || state?.twitch?.active && twitchIsLive){
+  if(!media?.active || !media.url || (state?.twitch?.active && twitchIsLive)){
     box.classList.add("hidden");
     video.pause();
     video.removeAttribute("src");
@@ -197,7 +197,9 @@ function renderEntertainment(){
 
   if(media.type==="image"){
     video.pause();
+    video.removeAttribute("src");
     video.classList.add("hidden");
+
     image.classList.remove("hidden");
 
     if(image.src!==media.url){
@@ -211,27 +213,31 @@ function renderEntertainment(){
   image.classList.add("hidden");
   video.classList.remove("hidden");
 
-  if(video.src!==media.url){
-    video.src=media.url;
-    video.load();
-  }
+  video.autoplay=true;
+  video.playsInline=true;
+  video.controls=false;
 
   video.loop=media.loop==="on";
 
-  const startedAt=Number(media.startedAt||0);
-  if(startedAt){
-    const elapsed=Math.max(0,(Date.now()-startedAt)/1000);
+  video.muted=false;
+  video.volume=1;
 
-    if(Math.abs(video.currentTime-elapsed)>2){
-      try{
-        video.currentTime=elapsed;
-      }catch(e){}
-    }
+  if(video.src!==media.url){
+    video.src=media.url;
+    video.load();
+
+    try{
+      video.currentTime=0;
+    }catch(e){}
   }
 
   video.play().catch(()=>{
-    sound?.classList.remove("hidden");
+    video.muted=true;
+
+    video.play().catch(()=>{});
   });
+
+  sound?.classList.add("hidden");
 }
 $("entertainmentSound")?.addEventListener("click",()=>{
   const video=$("entertainmentVideo");
