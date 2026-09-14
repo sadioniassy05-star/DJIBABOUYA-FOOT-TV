@@ -1,6 +1,7 @@
 
 const $=id=>document.getElementById(id);
 let state=null, pollTimer=null, clockTimer=null, logged=false;
+let tvPowerOff=false;
 const TWITCH_CHANNEL_DEFAULT="banialfaty";
 let twitchPlayer=null, twitchChannelLoaded="", twitchIsLive=false, twitchReady=false;
 let tvBackgroundUrl="/api/background";
@@ -170,6 +171,7 @@ $("scoreboard").style.background="transparent";
    else{f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML="";v.classList.remove("hidden");if(v.src!==state.directUrl){v.src=state.directUrl;v.play().catch(()=>{})}}
  }else{twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;v.classList.add("hidden");f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML=""}
   renderAd();renderPoster();renderGoalAnimation();renderSub();renderLineup();renderReplay();renderEntertainment();
+  renderPower();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
 let adAnimationTimer=null;
@@ -250,6 +252,16 @@ $("entertainmentSound")?.addEventListener("click",()=>{
     $("entertainmentSound")?.classList.add("hidden");
   }).catch(()=>{});
 });
+function renderPower(){
+  const overlay=$("tvPowerOverlay");
+  if(!overlay)return;
+
+  if(tvPowerOff){
+    overlay.classList.remove("hidden");
+  }else{
+    overlay.classList.add("hidden");
+  }
+}
 function renderAd(){
   const a=state?.ad;
   const e=$("ad");
@@ -910,6 +922,7 @@ $("removeAd").onclick=()=>save({ad:{active:false}});
 $("publishReplay").onclick=()=>save({replay:{active:true,url:$("replayUrl").value,start:Number($("replayStart").value||0),end:Number($("replayEnd").value||30),speed:Number($("replaySpeed").value)}});
 $("slowReplay").onclick=()=>save({replay:{active:true,url:$("replayUrl").value,speed:Number($("replaySpeed").value)}});
 $("removeReplay").onclick=()=>save({replay:{active:false}});
+$("tvPowerToggle").onclick=()=>{tvPowerOff=!tvPowerOff;renderPower();};
 $("publishSub").onclick=()=>save({substitution:{active:true,outName:$("outName").value,outNumber:$("outNumber").value,inName:$("inName").value,inNumber:$("inNumber").value,duration:Number($("subDuration").value||10)}});
 $("removeSub").onclick=()=>save({substitution:{active:false}});
 $("publishGoal").onclick=async()=>{
