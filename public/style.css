@@ -1132,4 +1132,9 @@
   bottom:20px;
   z-index:1000;
 }
-
+#loginBtn{
+  background:#dc2626;
+  color:#ffffff;
+  border:2px solid #ef4444;
+  font-weight:900;
+}
