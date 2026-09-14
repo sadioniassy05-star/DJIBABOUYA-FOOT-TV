@@ -260,18 +260,29 @@ function renderPower(){
   if(!overlay)return;
 
   if(tvPowerOff){
-  overlay.classList.remove("hidden");
-  overlay.classList.remove("power-starting");
-  if(button)button.textContent="⏻ RALLUMER LA TV";
-}else if(tvPowerStarting){
-  overlay.classList.remove("hidden");
-  overlay.classList.add("power-starting");
-  if(button)button.textContent="⏻ ÉTEINDRE LA TV";
-}else{
-  overlay.classList.add("hidden");
-  overlay.classList.remove("power-starting");
-  if(button)button.textContent="⏻ ÉTEINDRE LA TV";
-}
+    overlay.classList.remove("hidden");
+    overlay.classList.remove("power-starting");
+
+    if(button){
+      button.textContent="⏻ RALLUMER LA TV";
+    }
+
+  }else if(tvPowerStarting){
+    overlay.classList.remove("hidden");
+    overlay.classList.add("power-starting");
+
+    if(button){
+      button.textContent="⏻ RALLUMER LA TV";
+    }
+
+  }else{
+    overlay.classList.add("hidden");
+    overlay.classList.remove("power-starting");
+
+    if(button){
+      button.textContent="⏻ ÉTEINDRE LA TV";
+    }
+  }
 }
 function renderAd(){
   const a=state?.ad;
