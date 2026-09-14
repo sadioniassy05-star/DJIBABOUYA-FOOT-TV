@@ -1138,3 +1138,8 @@
   border:2px solid #ef4444;
   font-weight:900;
 }
+#adminPanel{
+  position:relative;
+  z-index:1100;
+}
+
