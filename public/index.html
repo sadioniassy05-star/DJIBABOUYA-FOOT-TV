@@ -12,7 +12,19 @@
     <video id="directVideo" class="direct-video" playsinline controls autoplay muted></video>
     <div id="directFrame" class="direct-frame hidden"><div id="twitchPlayer"></div></div>
     <div class="tv-shade"></div>
+    <!-- POWER TV — DJIBABOUYA FOOT TV -->
+<div id="tvPowerOverlay" class="tv-power-overlay hidden">
 
+  <div class="tv-power-glow"></div>
+
+  <div class="tv-power-logo">
+    <div class="tv-power-logo-main">DJIBABOUYA</div>
+    <div class="tv-power-logo-sub">FOOT TV</div>
+  </div>
+
+  <div class="tv-power-standby">STANDBY</div>
+
+</div>
     <header class="tv-header">
       <div class="brand">DJIBABOUYA FOOT TV</div>
       <div id="liveBadge" class="live-badge">● DIRECT</div>
@@ -56,6 +68,11 @@
     </div>
     <div id="controls" class="controls hidden">
       <div class="grid">
+        <section class="card">
+  <h2>⏻ ALIMENTATION TV</h2>
+  <button id="tvPowerToggle">⏻ ÉTEINDRE LA TV</button>
+  <p class="hint">Contrôle visible uniquement dans l'administration.</p>
+</section>
        <section class="card">
   <h2>⚽ AFFICHAGE TV</h2>
 
