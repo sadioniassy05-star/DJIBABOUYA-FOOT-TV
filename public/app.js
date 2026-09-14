@@ -254,12 +254,16 @@ $("entertainmentSound")?.addEventListener("click",()=>{
 });
 function renderPower(){
   const overlay=$("tvPowerOverlay");
+  const button=$("tvPowerToggle");
+
   if(!overlay)return;
 
   if(tvPowerOff){
     overlay.classList.remove("hidden");
+    if(button)button.textContent="⏻ RALLUMER LA TV";
   }else{
     overlay.classList.add("hidden");
+    if(button)button.textContent="⏻ ÉTEINDRE LA TV";
   }
 }
 function renderAd(){
