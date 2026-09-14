@@ -1102,4 +1102,29 @@
     transform:translateY(0);
   }
 }
+.tv-power-overlay.power-starting{
+  animation:tvPowerOnAnim 1.4s ease forwards;
+}
+@keyframes tvPowerOnAnim{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  25%{
+    opacity:1;
+    transform:scale(1.02);
+  }
+
+  60%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  100%{
+    opacity:0;
+    transform:scale(1.05);
+  }
+}
+
 
