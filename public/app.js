@@ -2,6 +2,7 @@
 const $=id=>document.getElementById(id);
 let state=null, pollTimer=null, clockTimer=null, logged=false;
 let tvPowerOff=false;
+let tvPowerStarting=false;
 const TWITCH_CHANNEL_DEFAULT="banialfaty";
 let twitchPlayer=null, twitchChannelLoaded="", twitchIsLive=false, twitchReady=false;
 let tvBackgroundUrl="/api/background";
@@ -259,12 +260,18 @@ function renderPower(){
   if(!overlay)return;
 
   if(tvPowerOff){
-    overlay.classList.remove("hidden");
-    if(button)button.textContent="⏻ RALLUMER LA TV";
-  }else{
-    overlay.classList.add("hidden");
-    if(button)button.textContent="⏻ ÉTEINDRE LA TV";
-  }
+  overlay.classList.remove("hidden");
+  overlay.classList.remove("power-starting");
+  if(button)button.textContent="⏻ RALLUMER LA TV";
+}else if(tvPowerStarting){
+  overlay.classList.remove("hidden");
+  overlay.classList.add("power-starting");
+  if(button)button.textContent="⏻ ÉTEINDRE LA TV";
+}else{
+  overlay.classList.add("hidden");
+  overlay.classList.remove("power-starting");
+  if(button)button.textContent="⏻ ÉTEINDRE LA TV";
+}
 }
 function renderAd(){
   const a=state?.ad;
@@ -926,7 +933,21 @@ $("removeAd").onclick=()=>save({ad:{active:false}});
 $("publishReplay").onclick=()=>save({replay:{active:true,url:$("replayUrl").value,start:Number($("replayStart").value||0),end:Number($("replayEnd").value||30),speed:Number($("replaySpeed").value)}});
 $("slowReplay").onclick=()=>save({replay:{active:true,url:$("replayUrl").value,speed:Number($("replaySpeed").value)}});
 $("removeReplay").onclick=()=>save({replay:{active:false}});
-$("tvPowerToggle").onclick=()=>{tvPowerOff=!tvPowerOff;renderPower();};
+$("tvPowerToggle").onclick=()=>{
+  if(tvPowerOff){
+    tvPowerStarting=true;
+    tvPowerOff=false;
+    renderPower();
+
+    setTimeout(()=>{
+      tvPowerStarting=false;
+      renderPower();
+    },1400);
+  }else{
+    tvPowerOff=true;
+    renderPower();
+  }
+};
 $("publishSub").onclick=()=>save({substitution:{active:true,outName:$("outName").value,outNumber:$("outNumber").value,inName:$("inName").value,inNumber:$("inNumber").value,duration:Number($("subDuration").value||10)}});
 $("removeSub").onclick=()=>save({substitution:{active:false}});
 $("publishGoal").onclick=async()=>{
