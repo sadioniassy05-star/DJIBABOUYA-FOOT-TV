@@ -259,6 +259,9 @@ function renderPower(){
 
   if(!overlay)return;
 
+  const serverPowerOff=!!(state&&state.tvPower);
+  tvPowerOff=serverPowerOff;
+
   if(tvPowerOff){
     overlay.classList.remove("hidden");
     overlay.classList.remove("power-starting");
@@ -948,14 +951,19 @@ $("tvPowerToggle").onclick=()=>{
   if(tvPowerOff){
     tvPowerStarting=true;
     tvPowerOff=false;
+
+    save({tvPower:false});
     renderPower();
 
     setTimeout(()=>{
       tvPowerStarting=false;
       renderPower();
     },1400);
+
   }else{
     tvPowerOff=true;
+
+    save({tvPower:true});
     renderPower();
   }
 };
