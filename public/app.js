@@ -9,7 +9,6 @@ let tvBackgroundUrl="/api/background";
 async function api(path,opts={}){const r=await fetch(path,{...opts,headers:{'content-type':'application/json',...(opts.headers||{})}});return r.json()}
 function fmt(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/60)).padStart(2,'0')+":"+String(sec%60).padStart(2,'0')}
 function currentClock(){if(!state)return 0;if(!state.running||!state.clockStartedAt)return state.clock;return state.clock+Math.floor((Date.now()-state.clockStartedAt)/1000)}
-function twitchParent(){ return window.location.hostname || "localhost"; }
 function twitchParent(){
   return "djibabouya-foot-tv.sadioniassy05.workers.dev";
 }
@@ -149,90 +148,299 @@ function ensureTwitchPlayer(){
   setTimeout(ensureTwitchPlayer,500);
 }
 function render(){
- if(!state)return;
- const photo=$("tv").querySelector(".tv-photo"); if(photo) photo.style.backgroundImage=`url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
- $("teamA").textContent=state.teamA;$("teamB").textContent=state.teamB;$("scoreA").textContent=state.scoreA;$("scoreB").textContent=state.scoreB;
-$("clock").textContent=fmt(currentClock());
+  if(!state)return;
+
+  const photo=$("tv").querySelector(".tv-photo");
+
+  if(photo){
+    photo.style.backgroundImage=
+      `url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
+  }
+
+  $("teamA").textContent=state.teamA;
+  $("teamB").textContent=state.teamB;
+  $("scoreA").textContent=state.scoreA;
+  $("scoreB").textContent=state.scoreB;
+  $("clock").textContent=fmt(currentClock());
+
   const addedClock=$("addedClock");
 
-if(state.addedTimeActive && state.addedTimeStartedAt){
-  const elapsed=Math.min(
-    Number(state.addedTimeElapsed||0)+
-    Math.max(0,Math.floor((Date.now()-state.addedTimeStartedAt)/1000)),
-    Number(state.addedTime||0)*60
-  );
+  if(state.addedTimeActive && state.addedTimeStartedAt){
 
-  if(Date.now()>=state.addedTimeStartedAt){
-    addedClock.textContent=`+${state.addedTime||0} ${fmt(elapsed)}`;
+    const elapsed=Math.min(
+      Number(state.addedTimeElapsed||0)+
+      Math.max(
+        0,
+        Math.floor(
+          (Date.now()-state.addedTimeStartedAt)/1000
+        )
+      ),
+      Number(state.addedTime||0)*60
+    );
+
+    if(Date.now()>=state.addedTimeStartedAt){
+
+      addedClock.textContent=
+        `+${state.addedTime||0} ${fmt(elapsed)}`;
+
+      addedClock.classList.remove("hidden");
+
+    }else{
+
+      addedClock.classList.add("hidden");
+
+    }
+
+  }else if(state.addedTimeElapsed>0){
+
+    addedClock.textContent=
+      `+${state.addedTime||0} ${fmt(state.addedTimeElapsed)}`;
+
     addedClock.classList.remove("hidden");
+
   }else{
+
     addedClock.classList.add("hidden");
+
   }
-}else if(state.addedTimeElapsed>0){
-  addedClock.textContent=`+${state.addedTime||0} ${fmt(state.addedTimeElapsed)}`;
-  addedClock.classList.remove("hidden");
-}else{
-  addedClock.classList.add("hidden");
-}
+
   const messageBox=$("message");
 
-if(messageBox){
-  const messageStart=Number(state.addedTimeMessageStartedAt||0);
-  const messageDuration=Number(state.addedTimeMessageDuration||5)*1000;
+  if(messageBox){
 
-  const isAddedTimeMessage=
-    String(state.message||"").startsWith("TEMPS ADDITIONNEL — ");
+    const messageStart=
+      Number(state.addedTimeMessageStartedAt||0);
 
-  if(
-    state.message &&
-    (
-      !isAddedTimeMessage ||
-      !messageStart ||
-      Date.now() < messageStart+messageDuration
-    )
-  ){
-    messageBox.textContent=state.message;
-    messageBox.classList.remove("hidden");
-  }else{
-    messageBox.textContent="";
-    messageBox.classList.add("hidden");
+    const messageDuration=
+      Number(state.addedTimeMessageDuration||5)*1000;
+
+    const isAddedTimeMessage=
+      String(state.message||"")
+        .startsWith("TEMPS ADDITIONNEL — ");
+
+    if(
+      state.message &&
+      (
+        !isAddedTimeMessage ||
+        !messageStart ||
+        Date.now()<messageStart+messageDuration
+      )
+    ){
+
+      messageBox.textContent=state.message;
+      messageBox.classList.remove("hidden");
+
+    }else{
+
+      messageBox.textContent="";
+      messageBox.classList.add("hidden");
+
+    }
   }
-}
- $("scoreboard").style.display=state.display.visible?"grid":"none";
-$("scoreboard").style.left=`${state.display.x??50}%`;
-$("scoreboard").style.top=`${state.display.y??9}%`;
-$("scoreboard").style.transform=`translateX(-50%) scale(${state.display.scale/100})`;
- $("scoreA").style.color=state.colors.score;
-$("scoreB").style.color=state.colors.score;
-$("clock").style.color=state.colors.clock;
 
-$("teamA").style.color=state.colors.teamA;
-$("teamB").style.color=state.colors.teamB;
-$("teamA").style.background=state.colors.teamABg;
-$("teamB").style.background=state.colors.teamBBg;
+  /* =========================
+     TABLEAU DE SCORE
+     ========================= */
 
-$("scoreboard").style.background="transparent";
- const v=$("directVideo"); const f=$("directFrame");
- if(state.twitch?.active){
-  v.classList.add("hidden");
+  $("scoreboard").style.display=
+    state.display.visible ? "grid" : "none";
 
-  f.classList.remove("hidden");
+  $("scoreboard").style.left=
+    `${state.display.x??50}%`;
 
-  f.innerHTML=`
-    <iframe
-      src="https://player.twitch.tv/?channel=banialfaty&parent=djibabouya-foot-tv.sadioniassy05.workers.dev&autoplay=false&muted=true"
-      style="width:100%;height:100%;border:0"
-      allow="autoplay;fullscreen"
-      allowfullscreen>
-    </iframe>
-  `;
-}
- }else if(state.directUrl){
-   twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;
-   if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
-   else{f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML="";v.classList.remove("hidden");if(v.src!==state.directUrl){v.src=state.directUrl;v.play().catch(()=>{})}}
- }else{twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;v.classList.add("hidden");f.classList.add("hidden");f.dataset.twitchSrc="";f.innerHTML=""}
-  renderAd();renderPoster();renderGoalAnimation();renderSub();renderLineup();renderReplay();renderEntertainment();
+  $("scoreboard").style.top=
+    `${state.display.y??9}%`;
+
+  $("scoreboard").style.transform=
+    `translateX(-50%) scale(${state.display.scale/100})`;
+
+  $("scoreA").style.color=
+    state.colors.score;
+
+  $("scoreB").style.color=
+    state.colors.score;
+
+  $("clock").style.color=
+    state.colors.clock;
+
+  $("teamA").style.color=
+    state.colors.teamA;
+
+  $("teamB").style.color=
+    state.colors.teamB;
+
+  $("teamA").style.background=
+    state.colors.teamABg;
+
+  $("teamB").style.background=
+    state.colors.teamBBg;
+
+  $("scoreboard").style.background="transparent";
+
+
+  /* =========================
+     VIDÉO / TWITCH
+     ========================= */
+
+  const v=$("directVideo");
+  const f=$("directFrame");
+
+  if(state.twitch?.active){
+
+    /*
+     * TWITCH ACTIF
+     * On utilise directement le lecteur iframe Twitch.
+     */
+
+    if(v){
+      v.pause?.();
+      v.classList.add("hidden");
+      v.removeAttribute("src");
+    }
+
+    if(f){
+
+      f.classList.remove("hidden");
+
+      const channel=
+        String(
+          state.twitch.channel ||
+          TWITCH_CHANNEL_DEFAULT
+        )
+        .trim()
+        .replace(/^#/,"");
+
+      const twitchSrc=
+        `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}`+
+        `&parent=djibabouya-foot-tv.sadioniassy05.workers.dev`+
+        `&autoplay=false&muted=true`;
+
+      /*
+       * Ne recrée pas l'iframe à chaque refresh.
+       * Le refresh arrive toutes les 1,5 secondes.
+       */
+
+      if(f.dataset.twitchSrc!==twitchSrc){
+
+        f.innerHTML=`
+          <iframe
+            src="${twitchSrc}"
+            style="
+              width:100%;
+              height:100%;
+              border:0;
+              display:block;
+            "
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        `;
+
+        f.dataset.twitchSrc=twitchSrc;
+      }
+    }
+
+  }else if(state.directUrl){
+
+    /*
+     * SOURCE DIRECTE
+     */
+
+    twitchPlayer=null;
+    twitchReady=false;
+    twitchChannelLoaded="";
+    twitchIsLive=false;
+
+    if(state.directType==="iframe"){
+
+      if(v){
+        v.pause?.();
+        v.classList.add("hidden");
+        v.removeAttribute("src");
+      }
+
+      if(f){
+
+        f.classList.remove("hidden");
+
+        const directSrc=
+          String(state.directUrl||"");
+
+        if(f.dataset.twitchSrc!==directSrc){
+
+          f.innerHTML=`
+            <iframe
+              src="${esc(directSrc)}"
+              style="
+                width:100%;
+                height:100%;
+                border:0;
+                display:block;
+              "
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          `;
+
+          f.dataset.twitchSrc=directSrc;
+        }
+      }
+
+    }else{
+
+      if(f){
+        f.classList.add("hidden");
+        f.dataset.twitchSrc="";
+        f.innerHTML="";
+      }
+
+      if(v){
+
+        v.classList.remove("hidden");
+
+        if(v.src!==state.directUrl){
+          v.src=state.directUrl;
+          v.play().catch(()=>{});
+        }
+      }
+    }
+
+  }else{
+
+    /*
+     * AUCUNE SOURCE VIDÉO
+     */
+
+    twitchPlayer=null;
+    twitchReady=false;
+    twitchChannelLoaded="";
+    twitchIsLive=false;
+
+    if(v){
+      v.pause?.();
+      v.classList.add("hidden");
+      v.removeAttribute("src");
+    }
+
+    if(f){
+      f.classList.add("hidden");
+      f.dataset.twitchSrc="";
+      f.innerHTML="";
+    }
+  }
+
+
+  /* =========================
+     AUTRES AFFICHAGES
+     ========================= */
+
+  renderAd();
+  renderPoster();
+  renderGoalAnimation();
+  renderSub();
+  renderLineup();
+  renderReplay();
+  renderEntertainment();
   renderPower();
 }
 function esc(s){return String(s||"").replace(/"/g,"&quot;")}
