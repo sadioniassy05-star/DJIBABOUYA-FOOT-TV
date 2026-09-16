@@ -171,10 +171,7 @@ $("scoreboard").style.background="transparent";
   v.classList.add("hidden");
   ensureTwitchPlayer();
 
-  if(twitchIsLive){
-    f.classList.remove("hidden");
-  }else{
-    f.classList.add("hidden");
+ f.classList.remove("hidden");
   }
    
  }else if(state.directUrl){
