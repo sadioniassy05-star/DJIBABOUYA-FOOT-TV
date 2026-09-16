@@ -14,14 +14,16 @@ function setTwitchVisibility(live){
   twitchIsLive=!!live;
 
   const f=$("directFrame");
+  if(!f) return;
 
-  if(live){
-    f.classList.remove("hidden");
-    $("liveBadge").textContent="● DIRECT — BANIALFATY";
-  }else{
-    f.classList.add("hidden");
-    $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
-  }
+  // Le lecteur Twitch reste visible.
+  // On ne le cache plus simplement parce que Twitch
+  // n'a pas encore envoyé l'événement ONLINE.
+  f.classList.remove("hidden");
+
+  $("liveBadge").textContent = live
+    ? "● DIRECT — BANIALFATY"
+    : "● CONNEXION AU DIRECT — BANIALFATY";
 }
 function initTwitchPlayer(channel){
   const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/,"");
@@ -58,17 +60,26 @@ function initTwitchPlayer(channel){
     });
 
     twitchPlayer.addEventListener(Twitch.Player.READY,()=>{
-      twitchReady=true;
-    });
+  twitchReady=true;
+  setTwitchVisibility(true);
+
+  try{
+    twitchPlayer.play();
+  }catch(e){}
+});
+    
 
     twitchPlayer.addEventListener(Twitch.Player.ONLINE,()=>{
       setTwitchVisibility(true);
       try{twitchPlayer.play();}catch(e){}
     });
 
-    twitchPlayer.addEventListener(Twitch.Player.OFFLINE,()=>{
+   twitchPlayer.addEventListener(Twitch.Player.OFFLINE,()=>{
   twitchIsLive=false;
-  $("liveBadge").textContent="● EN ATTENTE DU DIRECT";
+
+  // On garde le lecteur chargé
+  // pour détecter automatiquement le prochain direct.
+  setTwitchVisibility(false);
 });
 
     twitchPlayer.addEventListener(Twitch.Player.PLAYBACK_BLOCKED,()=>{});
