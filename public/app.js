@@ -11,9 +11,8 @@ function fmt(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/6
 function currentClock(){if(!state)return 0;if(!state.running||!state.clockStartedAt)return state.clock;return state.clock+Math.floor((Date.now()-state.clockStartedAt)/1000)}
 function twitchParent(){ return window.location.hostname || "localhost"; }
 function twitchParent(){
-  return window.location.hostname || "localhost";
+  return "djibabouya-foot-tv.sadioniassy05.workers.dev";
 }
-
 function setTwitchVisibility(live){
   twitchIsLive=!!live;
 
@@ -216,11 +215,18 @@ $("scoreboard").style.background="transparent";
  const v=$("directVideo"); const f=$("directFrame");
  if(state.twitch?.active){
   v.classList.add("hidden");
-  ensureTwitchPlayer();
 
- f.classList.remove("hidden");
-  }
-   
+  f.classList.remove("hidden");
+
+  f.innerHTML=`
+    <iframe
+      src="https://player.twitch.tv/?channel=banialfaty&parent=djibabouya-foot-tv.sadioniassy05.workers.dev&autoplay=false&muted=true"
+      style="width:100%;height:100%;border:0"
+      allow="autoplay;fullscreen"
+      allowfullscreen>
+    </iframe>
+  `;
+}
  }else if(state.directUrl){
    twitchPlayer=null;twitchReady=false;twitchChannelLoaded="";twitchIsLive=false;
    if(state.directType==="iframe"){v.classList.add("hidden");f.classList.remove("hidden");f.dataset.twitchSrc="";f.innerHTML=`<iframe src="${esc(state.directUrl)}" style="width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe>`}
