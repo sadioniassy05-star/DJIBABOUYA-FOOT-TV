@@ -55,7 +55,7 @@ function initTwitchPlayer(channel){
       height:"100%",
       channel:ch,
       parent:[twitchParent()],
-      autoplay:true,
+      autoplay:false,
       muted:true
     });
 
