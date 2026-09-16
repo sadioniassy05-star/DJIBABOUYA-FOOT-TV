@@ -10,42 +10,57 @@ async function api(path,opts={}){const r=await fetch(path,{...opts,headers:{'con
 function fmt(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/60)).padStart(2,'0')+":"+String(sec%60).padStart(2,'0')}
 function currentClock(){if(!state)return 0;if(!state.running||!state.clockStartedAt)return state.clock;return state.clock+Math.floor((Date.now()-state.clockStartedAt)/1000)}
 function twitchParent(){ return window.location.hostname || "localhost"; }
+function twitchParent(){
+  return window.location.hostname || "localhost";
+}
+
 function setTwitchVisibility(live){
   twitchIsLive=!!live;
 
   const f=$("directFrame");
   if(!f) return;
 
-  // Le lecteur Twitch reste visible.
-  // On ne le cache plus simplement parce que Twitch
-  // n'a pas encore envoyé l'événement ONLINE.
+  // Toujours afficher le lecteur Twitch.
   f.classList.remove("hidden");
 
-  $("liveBadge").textContent = live
-    ? "● DIRECT — BANIALFATY"
-    : "● CONNEXION AU DIRECT — BANIALFATY";
+  const badge=$("liveBadge");
+  if(badge){
+    badge.textContent=live
+      ? "● DIRECT — BANIALFATY"
+      : "● LECTEUR TWITCH — BANIALFATY";
+  }
 }
+
 function initTwitchPlayer(channel){
-  const ch=String(channel||TWITCH_CHANNEL_DEFAULT).trim().replace(/^#/,"");
+  const ch=String(channel||TWITCH_CHANNEL_DEFAULT)
+    .trim()
+    .replace(/^#/,"");
 
-  if(!window.Twitch || !window.Twitch.Player) return false;
+  if(!window.Twitch || !window.Twitch.Player){
+    return false;
+  }
 
-  // Si le lecteur existe déjà, on ne le recrée jamais.
+  const host=$("twitchPlayer");
+  if(!host){
+    return false;
+  }
+
+  // Le lecteur existe déjà.
   if(twitchPlayer){
     if(twitchChannelLoaded!==ch){
       twitchChannelLoaded=ch;
+
       try{
         twitchPlayer.setChannel(ch);
       }catch(e){}
     }
+
+    setTwitchVisibility(true);
     return true;
   }
 
   twitchChannelLoaded=ch;
   twitchReady=false;
-
-  const host=$("twitchPlayer");
-  if(!host) return false;
 
   host.innerHTML="";
 
@@ -59,49 +74,81 @@ function initTwitchPlayer(channel){
       muted:true
     });
 
-    twitchPlayer.addEventListener(Twitch.Player.READY,()=>{
-  twitchReady=true;
-  setTwitchVisibility(true);
+    twitchPlayer.addEventListener(
+      Twitch.Player.READY,
+      ()=>{
+        twitchReady=true;
+        setTwitchVisibility(true);
+      }
+    );
 
-  try{
-    twitchPlayer.play();
-  }catch(e){}
-});
-    
+    twitchPlayer.addEventListener(
+      Twitch.Player.ONLINE,
+      ()=>{
+        twitchIsLive=true;
+        setTwitchVisibility(true);
+      }
+    );
 
-    twitchPlayer.addEventListener(Twitch.Player.ONLINE,()=>{
-      setTwitchVisibility(true);
-      try{twitchPlayer.play();}catch(e){}
-    });
+    twitchPlayer.addEventListener(
+      Twitch.Player.OFFLINE,
+      ()=>{
+        twitchIsLive=false;
+        setTwitchVisibility(false);
+      }
+    );
 
-   twitchPlayer.addEventListener(Twitch.Player.OFFLINE,()=>{
-  twitchIsLive=false;
+    twitchPlayer.addEventListener(
+      Twitch.Player.PLAY,
+      ()=>{
+        twitchIsLive=true;
+        setTwitchVisibility(true);
+      }
+    );
 
-  // On garde le lecteur chargé
-  // pour détecter automatiquement le prochain direct.
-  setTwitchVisibility(false);
-});
+    twitchPlayer.addEventListener(
+      Twitch.Player.PLAYING,
+      ()=>{
+        twitchIsLive=true;
+        setTwitchVisibility(true);
+      }
+    );
 
-    twitchPlayer.addEventListener(Twitch.Player.PLAYBACK_BLOCKED,()=>{});
+    twitchPlayer.addEventListener(
+      Twitch.Player.PLAYBACK_BLOCKED,
+      ()=>{
+        // Sur iPhone, l'utilisateur peut devoir
+        // lancer la lecture manuellement.
+        setTwitchVisibility(twitchIsLive);
+      }
+    );
 
     return true;
 
   }catch(e){
+    console.error("Twitch Player error:",e);
+
     twitchPlayer=null;
     twitchReady=false;
     twitchChannelLoaded="";
+    twitchIsLive=false;
+
     setTwitchVisibility(false);
+
     return false;
   }
 }
+
 function ensureTwitchPlayer(){
   const ch=state?.twitch?.channel||TWITCH_CHANNEL_DEFAULT;
-  if(!initTwitchPlayer(ch)){
-    // The Twitch SDK may still be loading; retry shortly without any Admin action.
-    setTimeout(ensureTwitchPlayer,500);
-  }
-}
 
+  if(initTwitchPlayer(ch)){
+    return;
+  }
+
+  // Le SDK Twitch peut encore être en chargement.
+  setTimeout(ensureTwitchPlayer,500);
+}
 function render(){
  if(!state)return;
  const photo=$("tv").querySelector(".tv-photo"); if(photo) photo.style.backgroundImage=`url("${tvBackgroundUrl}?v=${state.backgroundVersion||0}")`;
